@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveVault - Brankas Tanggal Jadian 💖</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'blush': '#FFE5EC',
+            'rose-pink': '#FFB3C6',
+            'warm-cream': '#FFF8F0',
+            'deep-rose': '#FB6F92',
+            'hot-pink': '#FF8FAB',
+            'soft-pink': '#FFC2D1',
+            'dark-rose': '#C9184A'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+</head>
+<body class="bg-[#FFF8F0] min-h-screen relative text-[#4A3038] selection:bg-[#FFB3C6] selection:text-[#C9184A]">
+
+  <!-- Canvas Background: Floating Hearts & Sakura Blossoms -->
+  <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Mini Pastel Pink Vinyl Player Widget (Tahap 3) -->
+  <div id="miniVinylWidget" class="hidden fixed top-20 right-4 sm:right-8 z-40 items-center gap-3 vinyl-widget-box px-3.5 py-2 shadow-xl transition-all duration-300">
+    <!-- Spinning Vinyl Disc & Stylus Tonearm -->
+    <div class="relative cursor-pointer group" id="btnToggleVinylDisc" title="Klik piringan untuk Putar / Jeda Musik">
+      <div id="vinylDiscRecord" class="vinyl-disc vinyl-spinning">
+        <div class="vinyl-center-label">
+          <span class="animate-heartbeat text-[10px]">💖</span>
+        </div>
+      </div>
+      <!-- Stylus Tonearm -->
+      <div id="vinylTonearm" class="vinyl-tonearm playing">
+        <svg width="24" height="34" viewBox="0 0 24 34" fill="none">
+          <circle cx="20" cy="4" r="3.5" fill="#C9184A"/>
+          <path d="M20 4 L10 24 L7 32" stroke="#FB6F92" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="3" y="29" width="6" height="5" rx="1.5" fill="#800F2F"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Vinyl Info & Controls -->
+    <div class="flex flex-col pr-1 select-none">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        <span id="vinylMoodTitle" class="text-xs font-bold text-pink-700 tracking-tight">Music Box Romantis</span>
+      </div>
+      <div class="flex items-center justify-between gap-3 mt-0.5">
+        <span class="text-[10px] text-gray-500 font-semibold">BGM Cinta</span>
+        <div class="flex items-center gap-1.5">
+          <!-- Mute/Unmute Button -->
+          <button type="button" id="btnVinylMute" class="text-xs hover:scale-125 transition-transform" title="Bisukan / Nyalakan Suara">
+            🔊
+          </button>
+          <!-- Play/Pause Button -->
+          <button type="button" id="btnVinylPlayPause" class="text-xs hover:scale-125 transition-transform font-bold text-pink-600" title="Jeda / Putar">
+            ⏸️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Top Navigation Bar -->
+  <header class="sticky top-0 z-30 bg-[#FFF8F0]/85 backdrop-blur-md border-b border-[#FFB3C6]/40 px-4 sm:px-8 py-3.5 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      
+      <!-- Logo & Romantic Brand Title -->
+      <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FB6F92] to-[#FF8FAB] flex items-center justify-center text-white shadow-md shadow-pink-300 group-hover:scale-105 transition-transform">
+          <span class="text-xl animate-heartbeat">🔒</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold font-quicksand bg-gradient-to-r from-[#FB6F92] to-[#C9184A] bg-clip-text text-transparent">
+            LoveVault
+          </h1>
+          <p class="text-[11px] sm:text-xs font-handwriting text-pink-600 font-semibold tracking-wide">
+            Brankas Tanggal Jadian Abadi ✨
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Couple Pill Badge -->
+      <div class="hidden sm:flex items-center bg-white/80 border border-[#FFB3C6] px-4 py-1.5 rounded-full shadow-sm text-xs font-semibold">
+        <span class="text-gray-500 mr-2">Sepasang:</span>
+        <div id="liveCoupleBadge" class="flex items-center gap-1.5">
+          <span class="text-pink-600 font-bold">Kamu</span>
+          <span class="animate-heartbeat inline-block text-rose-500">❤️</span>
+          <span class="text-pink-600 font-bold">Dia</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center space-x-2">
+        <button id="btnFillSample" title="Isi contoh romantis otomatis" class="btn-soft bg-white/90 border border-pink-200 text-pink-700 hover:bg-pink-50 text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 shadow-sm">
+          <span>✨</span>
+          <span class="hidden md:inline">Isi Contoh</span>
+        </button>
+
+        <button id="btnReturnToEdit" title="Kembali ke Mode Edit" class="hidden btn-soft bg-[#FB6F92] hover:bg-[#C9184A] text-white text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 shadow-md">
+          <span>✏️</span>
+          <span>Edit Brankas</span>
+        </button>
+
+        <button id="btnShareVaultFloating" title="Salin Link Brankas" class="hidden btn-soft bg-white border border-[#FB6F92] text-[#FB6F92] hover:bg-pink-50 text-xs px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 shadow-sm">
+          <span>🔗</span>
+          <span class="hidden sm:inline">Salin Link</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+
+    <!-- ========================================================
+         SECTION 1: CREATOR MODE (Form Pembuat Brankas)
+         ======================================================== -->
+    <div id="creatorSection" class="transition-all duration-300">
+      
+      <!-- Hero Intro Banner -->
+      <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-pink-100/90 text-pink-700 text-xs font-semibold mb-3 border border-pink-200 animate-float-slow">
+          <span>💌</span> Buat Kejutan Terindah untuk Pasanganmu
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-[#4A1525] font-quicksand leading-tight">
+          Kunci Kenangan Manis di <br class="hidden sm:inline">
+          <span class="shimmer-text">Brankas Tanggal Jadian</span>
+        </h2>
+        <p class="text-sm sm:text-base text-gray-600 mt-2.5 font-medium">
+          Hanya pasanganmu yang tahu PIN tanggal jadian kalian yang bisa membuka brankas rahasia ini! 🔒💖
+        </p>
+      </div>
+
+      <!-- 2-Column Responsive Grid: Left Form | Right Live Preview -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: INTERACTIVE FORM (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- 1. Pasangan Kasmaran Card -->
+          <div class="glass-card p-6 sm:p-7">
+            <div class="flex items-center gap-3 mb-5 border-b border-pink-100 pb-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-base">
+                1
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-[#4A1525]">Pasangan Kasmaran</h3>
+                <p class="text-xs text-gray-500">Nama kalian berdua yang akan terukir di pintu brankas</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputUserName" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <span>🤴</span> Nama Kamu
+                </label>
+                <input 
+                  type="text" 
+                  id="inputUserName" 
+                  placeholder="Contoh: Romeo / Rizky" 
+                  class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-semibold transition-all outline-none"
+                >
+              </div>
+              <div>
+                <label for="inputPartnerName" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <span>👸</span> Nama Pasangan
+                </label>
+                <input 
+                  type="text" 
+                  id="inputPartnerName" 
+                  placeholder="Contoh: Juliet / Aura" 
+                  class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-semibold transition-all outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. PIN Tanggal Jadian & Petunjuk Lucu Card -->
+          <div class="glass-card p-6 sm:p-7">
+            <div class="flex items-center gap-3 mb-5 border-b border-pink-100 pb-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-base">
+                2
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-[#4A1525]">PIN Kunci Tanggal Jadian</h3>
+                <p class="text-xs text-gray-500">Kombinasi 6-digit angka tanggal spesial kalian</p>
+              </div>
+            </div>
+
+            <!-- 6 Digit PIN Boxes -->
+            <div class="mb-4">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                Masukkan 6 Digit PIN (DDMMYY)
+              </label>
+              <div class="flex items-center justify-between max-w-sm gap-2">
+                <input type="text" maxlength="1" id="pinDigit1" class="pin-digit-box" placeholder="1" inputmode="numeric">
+                <input type="text" maxlength="1" id="pinDigit2" class="pin-digit-box" placeholder="4" inputmode="numeric">
+                <span class="text-pink-300 font-bold text-xl">•</span>
+                <input type="text" maxlength="1" id="pinDigit3" class="pin-digit-box" placeholder="0" inputmode="numeric">
+                <input type="text" maxlength="1" id="pinDigit4" class="pin-digit-box" placeholder="2" inputmode="numeric">
+                <span class="text-pink-300 font-bold text-xl">•</span>
+                <input type="text" maxlength="1" id="pinDigit5" class="pin-digit-box" placeholder="2" inputmode="numeric">
+                <input type="text" maxlength="1" id="pinDigit6" class="pin-digit-box" placeholder="5" inputmode="numeric">
+              </div>
+              <p class="text-[11px] text-gray-500 mt-2">
+                💡 Contoh: <span class="font-bold text-pink-600">140225</span> untuk tanggal 14 Februari 2025.
+              </p>
+            </div>
+
+            <!-- Petunjuk / Hint Lucu -->
+            <div class="mt-5 pt-4 border-t border-pink-50">
+              <label for="inputHint" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <span>💡</span> Petunjuk / Hint Lucu
+              </label>
+              <input 
+                type="text" 
+                id="inputHint" 
+                placeholder="Contoh: Tanggal pertama kali kita resmi jadian di kafe favorit! ☕" 
+                class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm transition-all outline-none"
+              >
+              
+              <!-- Quick Hint Chips -->
+              <div class="flex flex-wrap gap-1.5 mt-2.5">
+                <span class="text-[11px] text-gray-500 self-center">Pilihan cepat:</span>
+                <button type="button" class="hint-chip text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 transition-colors" data-hint="Hari pertama kita jadian! 💕">
+                  Hari jadian 💕
+                </button>
+                <button type="button" class="hint-chip text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 transition-colors" data-hint="Tanggal pas kita pertama kali nonton bioskop bareng 🎬">
+                  Kencan bioskop 🎬
+                </button>
+                <button type="button" class="hint-chip text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 transition-colors" data-hint="Tanggal kamu nembak aku di pantai 🏖️💖">
+                  Momen di pantai 🏖️
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Upload Foto Polaroid & Pemilihan Template (Tahap 3 Update) -->
+          <div class="glass-card p-6 sm:p-7">
+            <div class="flex items-center gap-3 mb-5 border-b border-pink-100 pb-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-base">
+                3
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-[#4A1525]">Foto Kenangan & Template</h3>
+                <p class="text-xs text-gray-500">Pilih mode jumlah foto dan template estetik favorit kalian</p>
+              </div>
+            </div>
+
+            <!-- STEP 1: Pilih Mode Foto (1 Foto vs 2 Foto) -->
+            <div class="mb-5">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span>📸</span> 1. Pilih Mode Jumlah Foto:
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <button 
+                  type="button" 
+                  id="btnMode1Photo" 
+                  class="btn-jelly px-4 py-3 rounded-2xl border-2 border-[#FB6F92] bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-sm flex flex-col items-center justify-center shadow-md transition-all"
+                >
+                  <span class="text-xl mb-0.5">📷</span>
+                  <span>Mode 1 Foto</span>
+                  <span class="text-[10px] opacity-90 font-medium">2 Pilihan Template</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  id="btnMode2Photo" 
+                  class="btn-jelly px-4 py-3 rounded-2xl border-2 border-pink-200 bg-white/90 text-pink-700 font-extrabold text-sm flex flex-col items-center justify-center hover:bg-pink-50 shadow-sm transition-all"
+                >
+                  <span class="text-xl mb-0.5">📸📸</span>
+                  <span>Mode 2 Foto</span>
+                  <span class="text-[10px] opacity-75 font-medium">Template Kolase 2A</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 2A: Template Picker for Mode 1 Foto -->
+            <div id="mode1TemplateSection" class="mb-5">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span>🎨</span> 2. Pilih Template Desain:
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <!-- Template 1A -->
+                <div 
+                  id="cardTemplate1A" 
+                  class="cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2.5 text-center transition-all shadow-md group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-square rounded-xl overflow-hidden bg-white mb-2 border border-pink-200 flex items-center justify-center">
+                    <img src="assets/template-1a.png" class="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform" alt="Template 1A">
+                  </div>
+                  <span class="text-xs font-bold text-pink-800 block">Template 1A</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Bingkai Abstrak & Bunga</span>
+                </div>
+
+                <!-- Template 1B -->
+                <div 
+                  id="cardTemplate1B" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2.5 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-square rounded-xl overflow-hidden bg-neutral-100 mb-2 border border-pink-100 flex items-center justify-center">
+                    <img src="assets/template-1b.jpg" class="w-full h-full object-contain group-hover:scale-105 transition-transform" alt="Template 1B">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 1B</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Vintage Teddy & Retro Cam</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2B: Template Banner for Mode 2 Foto (Automated 2A) -->
+            <div id="mode2TemplateSection" class="hidden mb-5">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span>🎨</span> Desain Template Terpilih:
+              </label>
+              <div class="border-2 border-rose-400 bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-3 flex items-center gap-3 shadow-sm">
+                <div class="w-14 h-16 rounded-xl overflow-hidden bg-white border border-pink-200 flex-shrink-0">
+                  <img src="assets/template-2a.jpg" class="w-full h-full object-cover" alt="Template 2A">
+                </div>
+                <div>
+                  <span class="text-xs font-bold text-pink-900 block">Template 2A: Double Polaroid Cozy Knit</span>
+                  <span class="text-[11px] text-gray-600 block leading-snug">2 Foto Polaroid estetik dengan rajutan krem & pita kotak-kotak cokelat</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: Photo Upload Section -->
+            <!-- Mode 1: 1 Photo Upload Box -->
+            <div id="uploadSlotMode1" class="mb-4">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span>📤</span> 3. Unggah Foto Kenangan:
+              </label>
+              <div id="dropZonePhotoSingle" class="border-2 border-dashed border-pink-300 rounded-2xl p-4 sm:p-5 text-center bg-white/70 hover:bg-pink-50/60 transition-colors cursor-pointer">
+                <input type="file" id="photoUploadInputSingle" accept="image/*" class="hidden">
+                <label for="photoUploadInputSingle" class="cursor-pointer flex flex-col items-center">
+                  <div class="w-11 h-11 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xl mb-1.5 shadow-inner">
+                    📸
+                  </div>
+                  <span class="text-sm font-bold text-pink-700">Pilih Foto atau Seret ke Sini</span>
+                  <span class="text-[11px] text-gray-500 mt-0.5">JPG, PNG, WEBP (Diproses 100% di browser)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Mode 2: 2 Photo Upload Boxes -->
+            <div id="uploadSlotMode2" class="hidden mb-4 space-y-3">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span>📤</span> 3. Unggah 2 Foto Polaroid:
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Slot 1 -->
+                <div id="dropZonePhotoSlot1" class="border-2 border-dashed border-pink-300 rounded-2xl p-3.5 text-center bg-white/70 hover:bg-pink-50/60 transition-colors cursor-pointer">
+                  <input type="file" id="photoUploadInputSlot1" accept="image/*" class="hidden">
+                  <label for="photoUploadInputSlot1" class="cursor-pointer flex flex-col items-center">
+                    <span class="text-base mb-1">🖼️</span>
+                    <span class="text-xs font-bold text-pink-800">Foto 1: Polaroid Kiri Atas</span>
+                    <span class="text-[10px] text-gray-500">Klik untuk ganti foto</span>
+                  </label>
+                </div>
+
+                <!-- Slot 2 -->
+                <div id="dropZonePhotoSlot2" class="border-2 border-dashed border-pink-300 rounded-2xl p-3.5 text-center bg-white/70 hover:bg-pink-50/60 transition-colors cursor-pointer">
+                  <input type="file" id="photoUploadInputSlot2" accept="image/*" class="hidden">
+                  <label for="photoUploadInputSlot2" class="cursor-pointer flex flex-col items-center">
+                    <span class="text-base mb-1">🖼️</span>
+                    <span class="text-xs font-bold text-pink-800">Foto 2: Polaroid Kanan Bawah</span>
+                    <span class="text-[10px] text-gray-500">Klik untuk ganti foto</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Caption Tulisan Tangan -->
+            <div class="mb-4">
+              <label for="polaroidCaptionInput" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <span>✍️</span> Caption Tulisan Tangan Polaroid
+              </label>
+              <input 
+                type="text" 
+                id="polaroidCaptionInput" 
+                value="Hari terindah bersama kamu ❤️" 
+                placeholder="Tulis caption romantis di bawah foto..." 
+                class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-handwriting text-lg text-pink-700 transition-all outline-none"
+              >
+            </div>
+
+            <!-- Tone / Filter Selector -->
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                Efek Sentuhan Foto
+              </label>
+              <div class="flex gap-2">
+                <button type="button" class="filter-btn text-xs px-3.5 py-1.5 rounded-xl font-semibold bg-rose-500 text-white transition-all shadow-sm" data-filter="romantic">
+                  ✨ Warm Romantic
+                </button>
+                <button type="button" class="filter-btn text-xs px-3.5 py-1.5 rounded-xl font-semibold bg-pink-100 text-pink-700 hover:bg-pink-200 transition-all" data-filter="vintage">
+                  🎞️ Vintage Nostalgia
+                </button>
+                <button type="button" class="filter-btn text-xs px-3.5 py-1.5 rounded-xl font-semibold bg-pink-100 text-pink-700 hover:bg-pink-200 transition-all" data-filter="original">
+                  🌸 Asli Segar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Surat Rahasia Dari Hati -->
+          <div class="glass-card p-6 sm:p-7">
+            <div class="flex items-center justify-between mb-4 border-b border-pink-100 pb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-base">
+                  4
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-[#4A1525]">Surat Rahasia Dari Hati</h3>
+                  <p class="text-xs text-gray-500">Pesan cinta mendalam saat brankas terbuka</p>
+                </div>
+              </div>
+              <span id="letterCharCount" class="text-xs text-pink-500 font-semibold">0 karakter</span>
+            </div>
+
+            <!-- Sweet Templates & Emoji toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-gray-500 font-semibold">Template:</span>
+                <button type="button" class="letter-template-btn text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 font-medium" data-template="romantic">
+                  Romantis 💕
+                </button>
+                <button type="button" class="letter-template-btn text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 font-medium" data-template="funny">
+                  Lucu/Bucin 😜
+                </button>
+                <button type="button" class="letter-template-btn text-xs bg-pink-50 hover:bg-pink-100 text-pink-700 px-2.5 py-1 rounded-lg border border-pink-200 font-medium" data-template="promises">
+                  Janji Setia 💍
+                </button>
+              </div>
+
+              <!-- Quick Emoji buttons -->
+              <div class="flex items-center gap-1 bg-white/70 px-2 py-1 rounded-lg border border-pink-100">
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">💕</button>
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">🥺</button>
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">🌹</button>
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">💌</button>
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">✨</button>
+                <button type="button" class="emoji-btn hover:scale-125 transition-transform text-sm">🧸</button>
+              </div>
+            </div>
+
+            <textarea 
+              id="inputSecretLetter" 
+              rows="6" 
+              placeholder="Tuliskan isi hatimu yang terdalam di sini... Bagaimana perasaanmu saat bersamanya, janji bahagiamu, atau sekadar ungkapan rindu yang tulus... 💌" 
+              class="w-full parchment-paper p-4 text-sm leading-relaxed text-[#4A3038] focus:outline-none focus:ring-2 focus:ring-[#FB6F92] transition-all resize-none font-medium"
+            ></textarea>
+          </div>
+
+          <!-- 5. Lagu Latar Suasana Hati -->
+          <div class="glass-card p-6 sm:p-7">
+            <div class="flex items-center gap-3 mb-5 border-b border-pink-100 pb-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-base">
+                5
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-[#4A1525]">Musik Latar Suasana Hati</h3>
+                <p class="text-xs text-gray-500">Iringan melodi manis saat membuka brankas cinta</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+              <div class="sm:col-span-8">
+                <select 
+                  id="selectMusicMood" 
+                  class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-semibold text-gray-800 transition-all outline-none"
+                >
+                  <option value="music_box" selected>🎵 1. Music Box Romantis (Melodi Lullaby Bell Abadi)</option>
+                  <option value="acoustic">🎸 2. Acoustic Sweet (Arpeggio Gitar Romantis Hangat)</option>
+                  <option value="lofi">☕ 3. Lo-Fi Bucin (Chord Hangat Vintage Santai)</option>
+                  <option value="custom">🔗 4. Link MP3 Kustom (Masukkan URL Audio Sendiri)</option>
+                </select>
+              </div>
+
+              <!-- Preview Button with Visualizer Wave -->
+              <div class="sm:col-span-4 flex items-center">
+                <button 
+                  type="button" 
+                  id="btnToggleMusicPreview" 
+                  class="w-full btn-soft bg-pink-100 hover:bg-pink-200 text-pink-700 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-pink-200"
+                >
+                  <div class="flex items-end gap-0.5 h-4">
+                    <span class="music-bar"></span>
+                    <span class="music-bar"></span>
+                    <span class="music-bar"></span>
+                    <span class="music-bar"></span>
+                    <span class="music-bar"></span>
+                  </div>
+                  <span id="musicPreviewText">Dengarkan Preview</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Custom URL Input (Hidden by default) -->
+            <div id="customMusicContainer" class="hidden mt-3 pt-3 border-t border-pink-50">
+              <label for="inputCustomMusic" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                URL File MP3 Kustom
+              </label>
+              <input 
+                type="url" 
+                id="inputCustomMusic" 
+                placeholder="https://example.com/lagu-kita.mp3" 
+                class="w-full px-4 py-2 rounded-xl border border-pink-200 focus:border-[#FB6F92] bg-white/90 text-xs transition-all outline-none"
+              >
+              <p class="text-[11px] text-gray-400 mt-1">
+                Catatan: Pastikan link MP3 langsung dapat diakses secara publik (Direct Link / CORS enabled).
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT COLUMN: LIVE POLAROID PREVIEW & LOCK CTA (5 cols - Sticky) -->
+        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
+
+          <!-- Preview Card -->
+          <div class="glass-card p-6 sm:p-7 text-center">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold mb-4">
+              <span>👀</span> Live Preview Polaroid
+            </div>
+
+            <!-- Classic Polaroid Container -->
+            <div class="flex justify-center my-2">
+              <div id="polaroidPreviewCard" class="polaroid-frame text-center">
+                <!-- Washi Tape -->
+                <div class="washi-tape"></div>
+
+                <!-- Canvas Image Area (Adaptive Aspect Ratio for 1:1 and 4:5 Templates) -->
+                <div class="max-w-[320px] sm:max-w-[350px] w-full overflow-hidden rounded-[4px] shadow-sm flex items-center justify-center mx-auto bg-neutral-50/50">
+                  <canvas id="polaroidCanvas" class="w-full h-auto object-contain rounded-[3px] block"></canvas>
+                </div>
+
+                <!-- Handwritten Bottom Caption -->
+                <div class="pt-3 pb-1 px-2">
+                  <p id="polaroidDisplayCaption" class="font-handwriting text-2xl sm:text-3xl text-pink-700 tracking-wide select-none leading-tight min-h-[38px]">
+                    Hari terindah bersama kamu ❤️
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs text-gray-500 mt-4 italic">
+              "Setiap detik bersamamu adalah kenangan yang ingin kuabadikan selamanya."
+            </p>
+
+            <!-- Big Glowing Bouncy Jelly CTA Button -->
+            <div class="mt-6 pt-5 border-t border-pink-100">
+              <button 
+                type="button" 
+                id="btnLockAndPreview" 
+                class="w-full btn-jelly bg-gradient-to-r from-[#FB6F92] via-[#FF8FAB] to-[#C9184A] text-white font-extrabold text-base sm:text-lg py-4 px-6 rounded-2xl shadow-xl flex items-center justify-center gap-3 cursor-pointer group"
+              >
+                <span class="text-2xl group-hover:scale-125 transition-transform">🔒</span>
+                <span>Kunci Brankas & Lihat Preview</span>
+                <span class="text-xl group-hover:translate-x-1 transition-transform">✨</span>
+              </button>
+              <p class="text-[11px] text-gray-500 mt-2 font-medium">
+                Setelah dikunci, kamu bisa langsung mencoba membuka brankas dengan PIN!
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Sweet Guarantee Badge -->
+          <div class="glass-card-subtle p-4 text-center text-xs text-gray-600 flex items-center justify-center gap-2">
+            <span>🛡️</span>
+            <span>Semua data foto dan pesan tersimpan aman di browser tanpa server/database.</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         SECTION 2: LOCKED VAULT SCREEN (Layar Brankas Terkunci)
+         Tahap 2: Kotak Perhiasan Romantis & Gembok Cinta
+         ======================================================== -->
+    <div id="lockedVaultSection" class="hidden transition-all duration-500 max-w-xl mx-auto py-4">
+      
+      <!-- Vault Jewelry Box Card -->
+      <div id="vaultSafeCard" class="jewelry-box-card p-6 sm:p-10 relative overflow-hidden text-center">
+        
+        <!-- Decorative Corner Gems -->
+        <div class="absolute top-4 left-4 text-pink-300 text-base">💎</div>
+        <div class="absolute top-4 right-4 text-pink-300 text-base">💎</div>
+        <div class="absolute bottom-4 left-4 text-pink-300 text-base">💎</div>
+        <div class="absolute bottom-4 right-4 text-pink-300 text-base">💎</div>
+
+        <!-- Safe Status Badge -->
+        <div class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold mb-2 border border-rose-200 shadow-sm">
+          <span>🔐</span> RAHASIA TERKUNCI
+        </div>
+        
+        <!-- Bouncy Heart Padlock -->
+        <div class="my-3 flex justify-center">
+          <div id="heartPadlockEl" class="heart-padlock-container bouncing" title="Gembok Cinta Abadi 💕">
+            <div class="padlock-shackle"></div>
+            <div class="padlock-body">
+              <div class="padlock-keyhole"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Greeting for Partner -->
+        <h2 class="text-xl sm:text-2xl font-extrabold text-[#4A1525] font-quicksand leading-snug">
+          Halo <span id="vaultPartnerGreeting" class="shimmer-text">Juliet</span>, <br class="sm:hidden">
+          ada rahasia terkunci dari <span id="vaultUserGreeting" class="text-pink-600 font-bold">Romeo</span> nih! 💌
+        </h2>
+        
+        <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+          Buktikan kalau kamu masih ingat tanggal jadian kita yang paling manis ✨
+        </p>
+
+        <!-- Small Hint Button -->
+        <div class="mt-2.5 mb-5">
+          <button 
+            type="button" 
+            id="btnVaultHint" 
+            class="btn-soft inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-yellow-50 hover:bg-yellow-100 text-yellow-800 text-xs font-bold border border-yellow-200 shadow-sm"
+          >
+            <span class="animate-bounce">💡</span>
+            <span>Lihat Petunjuk dari <span id="vaultHintAuthor">Pasanganmu</span></span>
+          </button>
+        </div>
+
+        <!-- 6-Digit PIN Display Circles -->
+        <div class="mb-3">
+          <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Kombinasi 6-Digit Tanggal Jadian (DDMMYY)
+          </p>
+          <div id="vaultKeypadDisplay" class="flex items-center justify-center gap-2.5 sm:gap-3">
+            <div class="pin-indicator-dot" data-index="0"></div>
+            <div class="pin-indicator-dot" data-index="1"></div>
+            <div class="pin-indicator-dot" data-index="2"></div>
+            <div class="pin-indicator-dot" data-index="3"></div>
+            <div class="pin-indicator-dot" data-index="4"></div>
+            <div class="pin-indicator-dot" data-index="5"></div>
+          </div>
+        </div>
+
+        <!-- Teasing Error Message Alert Banner for Wrong PIN -->
+        <div id="teasingAlertContainer" class="hidden mb-4 min-h-[44px] flex items-center justify-center">
+          <div class="teasing-alert-enter inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-50 border border-rose-300 text-rose-700 text-xs sm:text-sm font-bold shadow-sm">
+            <span id="teasingAlertText">Yah salah! Masa lupa tanggal jadian sendiri sih?! 😤</span>
+          </div>
+        </div>
+
+        <!-- Cute Round Pastel PIN Keypad (0-9, Clear, Delete) -->
+        <div class="max-w-xs mx-auto grid grid-cols-3 gap-3 sm:gap-4 my-2">
+          <!-- 1 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="1">
+            <span class="num-text">1</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 2 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="2">
+            <span class="num-text">2</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 3 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="3">
+            <span class="num-text">3</span>
+            <span class="heart-sub">♥</span>
+          </button>
+
+          <!-- 4 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="4">
+            <span class="num-text">4</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 5 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="5">
+            <span class="num-text">5</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 6 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="6">
+            <span class="num-text">6</span>
+            <span class="heart-sub">♥</span>
+          </button>
+
+          <!-- 7 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="7">
+            <span class="num-text">7</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 8 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="8">
+            <span class="num-text">8</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- 9 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="9">
+            <span class="num-text">9</span>
+            <span class="heart-sub">♥</span>
+          </button>
+
+          <!-- Reset / Clear -->
+          <button type="button" id="btnKeypadClear" class="keypad-btn-cute bg-pink-50 hover:bg-pink-100" title="Hapus Semua">
+            <span class="num-text text-xs sm:text-sm font-black text-pink-600">RESET</span>
+            <span class="heart-sub text-pink-400">↺</span>
+          </button>
+          <!-- 0 -->
+          <button type="button" class="keypad-num-btn keypad-btn-cute" data-num="0">
+            <span class="num-text">0</span>
+            <span class="heart-sub">♥</span>
+          </button>
+          <!-- Delete Backspace -->
+          <button type="button" id="btnKeypadDelete" class="keypad-btn-cute bg-pink-50 hover:bg-pink-100" title="Hapus Satu Digit">
+            <span class="num-text text-lg font-black text-pink-600">⌫</span>
+            <span class="heart-sub text-pink-400">hapus</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         SECTION 3: UNLOCKED LOVE SANCTUARY (Brankas Terbuka!)
+         Tahap 2: Confetti, Polaroid Bergoyang & Surat Typewriter
+         ======================================================== -->
+    <div id="unlockedViewSection" class="hidden transition-all duration-700 max-w-3xl mx-auto py-4">
+      
+      <div class="glass-card p-6 sm:p-10 border-4 border-rose-300 shadow-2xl relative">
+        
+        <!-- Celebration Header -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mb-3 border border-emerald-200 animate-bounce">
+            <span>🔓</span> BRANKAS BERHASIL DIBUKA!
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-[#4A1525] font-quicksand">
+            Selamat Datang di Ruang Cinta Abadi
+          </h2>
+          <p id="unlockedCoupleNames" class="shimmer-text font-bold text-lg sm:text-xl mt-1">
+            Rizky ❤️ Aura
+          </p>
+        </div>
+
+        <!-- 2 Column: Polaroid (Click to Wiggle) & Envelope/Typewriter Letter -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mb-8">
+          
+          <!-- Polaroid (Clickable to Wiggle & Burst Hearts) -->
+          <div class="flex flex-col items-center justify-center">
+            <div id="unlockedPolaroidCard" class="polaroid-frame polaroid-entrance text-center cursor-pointer select-none" title="Klik foto untuk bergoyang! ✨">
+              <div class="washi-tape"></div>
+              <div class="max-w-[300px] sm:max-w-[340px] w-full overflow-hidden rounded-[4px] shadow-sm flex items-center justify-center mx-auto bg-neutral-50/50">
+                <canvas id="unlockedPolaroidCanvas" class="w-full h-auto object-contain rounded-[3px] block"></canvas>
+              </div>
+              <div class="pt-3 pb-1 px-2">
+                <p id="unlockedPolaroidCaption" class="font-handwriting text-2xl sm:text-3xl text-pink-700 tracking-wide">
+                  Hari terindah bersama kamu ❤️
+                </p>
+              </div>
+            </div>
+            
+            <button type="button" id="btnWigglePolaroidHint" class="text-xs text-pink-600 font-bold mt-3 py-1 px-3 rounded-full bg-pink-50 border border-pink-200 hover:bg-pink-100 transition-colors flex items-center gap-1.5 shadow-sm">
+              <span class="animate-bounce">📸</span> Klik foto untuk sedikit bergoyang ✨
+            </button>
+          </div>
+
+          <!-- Secret Love Letter with Animated Envelope & Typewriter Effect -->
+          <div class="envelope-wrapper">
+            <div class="envelope-flap">
+              <span class="text-xs font-bold text-pink-600 tracking-wider uppercase">💌 SURAT RAHASIA DARI HATI</span>
+            </div>
+
+            <div class="parchment-paper p-5 sm:p-6 relative">
+              <div class="flex items-center justify-between border-b border-pink-100 pb-2 mb-3">
+                <div class="flex items-center gap-1.5 text-rose-500 font-bold text-xs uppercase tracking-wider">
+                  <span>🌹</span> Untukmu Yang Tersayang
+                </div>
+                
+                <!-- Typewriter Controls -->
+                <div class="flex items-center gap-1.5">
+                  <button type="button" id="btnSkipTypewriter" class="btn-soft text-[11px] bg-pink-100 hover:bg-pink-200 text-pink-700 px-2.5 py-1 rounded-lg font-bold" title="Tampilkan seluruh teks langsung">
+                    ⏩ Lewati
+                  </button>
+                  <button type="button" id="btnReplayTypewriter" class="btn-soft text-[11px] bg-white border border-pink-200 text-pink-600 hover:bg-pink-50 px-2 py-1 rounded-lg font-bold" title="Ketik ulang dari awal">
+                    🔄 Ulang
+                  </button>
+                </div>
+              </div>
+
+              <!-- Typed Letter Body -->
+              <div class="font-medium text-sm leading-relaxed text-[#4A3038] min-h-[160px] max-h-72 overflow-y-auto pr-2 relative">
+                <span id="unlockedLetterBody" class="whitespace-pre-wrap"></span>
+                <span id="typewriterCursor" class="typewriter-cursor text-rose-500 font-bold">|❤️</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Bar inside Unlocked View -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-6 border-t border-pink-100">
+          <!-- Tahap 3: Download IG Story Button -->
+          <button 
+            type="button" 
+            id="btnDownloadStory" 
+            class="btn-ig-story text-white text-xs sm:text-sm font-extrabold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 cursor-pointer"
+            title="Unduh Kartu Instagram Story 9:16 (1080x1920)"
+          >
+            <span>📸</span>
+            <span>Simpan Kenangan (IG Story)</span>
+            <span>✨</span>
+          </button>
+
+          <button 
+            type="button" 
+            id="btnShareVault" 
+            class="btn-jelly bg-gradient-to-r from-[#FB6F92] to-[#C9184A] text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2"
+          >
+            <span>📋</span>
+            <span>Salin Link Brankas untuk Pasangan</span>
+          </button>
+
+          <button 
+            type="button" 
+            id="btnRelockVault" 
+            class="btn-soft bg-white border border-pink-200 text-pink-700 hover:bg-pink-50 text-xs sm:text-sm font-bold px-5 py-3 rounded-xl shadow-sm flex items-center gap-2"
+          >
+            <span>🔒</span>
+            <span>Kunci Brankas Lagi</span>
+          </button>
+
+          <button 
+            type="button" 
+            id="btnEditFromUnlocked" 
+            class="btn-soft bg-pink-100 hover:bg-pink-200 text-pink-700 border border-pink-200 text-xs sm:text-sm font-bold px-5 py-3 rounded-xl shadow-sm flex items-center gap-2"
+          >
+            <span>✏️</span>
+            <span>Ubah Data / Edit</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Hint Modal Dialog -->
+  <div id="hintModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full p-6 text-center modal-content-enter border-2 border-pink-200 shadow-2xl">
+      <div class="w-14 h-14 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+        💡
+      </div>
+      <h3 class="text-lg font-bold text-[#4A1525]">Petunjuk dari Pasanganmu:</h3>
+      <p id="hintModalText" class="text-sm font-medium text-pink-700 bg-pink-50/80 p-4 rounded-xl border border-pink-100 my-4 leading-relaxed italic">
+        "Tanggal pertama kali kita jadian!"
+      </p>
+      <button 
+        type="button" 
+        id="btnCloseHint" 
+        class="btn-jelly w-full bg-[#FB6F92] hover:bg-[#C9184A] text-white font-bold py-2.5 rounded-xl text-sm shadow-md"
+      >
+        Mengerti, Terima Kasih! 💕
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/particles.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/polaroid.js"></script>
+  <script src="js/storyCard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

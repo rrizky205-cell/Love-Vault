@@ -1,0 +1,647 @@
+/* LoveVault - Romantic Styling & Custom Animations */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  --blush: #FFE5EC;
+  --rose-pink: #FFB3C6;
+  --warm-cream: #FFF8F0;
+  --deep-rose: #FB6F92;
+  --hot-pink: #FF8FAB;
+  --soft-pink: #FFC2D1;
+  --dark-rose: #C9184A;
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(255, 179, 198, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  background-color: var(--warm-cream);
+  color: #4A3038;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Fonts */
+.font-handwriting {
+  font-family: 'Caveat', cursive;
+}
+
+.font-romantic {
+  font-family: 'Pacifico', cursive;
+}
+
+.font-quicksand {
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* Glassmorphism Romantic Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2px solid var(--glass-border);
+  box-shadow: 0 16px 40px -12px rgba(251, 111, 146, 0.25);
+  border-radius: 28px;
+}
+
+.glass-card-subtle {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 229, 236, 0.8);
+  border-radius: 20px;
+}
+
+/* Pastel Jewelry Box Card (Tahap 2 Locked Screen) */
+.jewelry-box-card {
+  background: linear-gradient(145deg, #ffffff 0%, #FFF5F7 60%, #FFE9EF 100%);
+  border: 3.5px solid #FFB3C6;
+  box-shadow: 
+    0 24px 50px -12px rgba(201, 24, 74, 0.25),
+    0 0 0 8px rgba(255, 229, 236, 0.6),
+    inset 0 2px 6px rgba(255, 255, 255, 0.95);
+  border-radius: 36px;
+  position: relative;
+}
+
+/* Bouncy Heart Padlock */
+.heart-padlock-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.heart-padlock-container:hover {
+  transform: scale(1.08) translateY(-4px);
+}
+
+.heart-padlock-container.bouncing {
+  animation: padlockBounce 2.2s ease-in-out infinite;
+}
+
+@keyframes padlockBounce {
+  0%, 100% {
+    transform: translateY(0px) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-10px) scale(1.04, 0.96);
+  }
+  50% {
+    transform: translateY(0px) scale(0.96, 1.04);
+  }
+  70% {
+    transform: translateY(-4px) scale(1.02, 0.98);
+  }
+}
+
+/* Padlock Shackle (Metal Arch) */
+.padlock-shackle {
+  width: 52px;
+  height: 52px;
+  border: 8px solid #F4ACB7;
+  border-bottom: none;
+  border-radius: 32px 32px 0 0;
+  margin-bottom: -18px;
+  z-index: 1;
+  background: transparent;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(157, 2, 8, 0.15);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: left bottom;
+}
+
+/* Shackle Unlocked state */
+.heart-padlock-container.unlocked .padlock-shackle {
+  transform: translateY(-16px) rotate(-35deg);
+  border-color: #FFD166;
+  filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.7));
+}
+
+/* Padlock Body (3D Heart) */
+.padlock-body {
+  width: 90px;
+  height: 80px;
+  background: radial-gradient(circle at 35% 35%, #FF8FAB 0%, #FB6F92 65%, #C9184A 100%);
+  position: relative;
+  z-index: 2;
+  box-shadow: 
+    0 12px 24px -4px rgba(201, 24, 74, 0.4),
+    inset 0 4px 8px rgba(255, 255, 255, 0.65),
+    inset 0 -4px 8px rgba(100, 10, 30, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: path('M 45 15 C 35 -5, 0 -2, 0 32 C 0 54, 25 70, 45 80 C 65 70, 90 54, 90 32 C 90 -2, 55 -5, 45 15 Z');
+}
+
+.padlock-keyhole {
+  width: 14px;
+  height: 20px;
+  background: #590d22;
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.padlock-keyhole::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 10px;
+  background: #590d22;
+}
+
+/* Keypad Round Cute Buttons */
+.keypad-btn-cute {
+  width: 68px;
+  height: 68px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ffffff 0%, #FFF0F3 100%);
+  border: 2px solid #FFCCD5;
+  box-shadow: 0 6px 16px -2px rgba(251, 111, 146, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin: 0 auto;
+}
+
+.keypad-btn-cute:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: #FB6F92;
+  box-shadow: 0 10px 22px -3px rgba(251, 111, 146, 0.4);
+  background: linear-gradient(135deg, #ffffff 0%, #FFE5EC 100%);
+}
+
+.keypad-btn-cute:active {
+  animation: jellyAnimation 0.45s ease;
+  background: #FFB3C6;
+}
+
+.keypad-btn-cute .num-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #800F2F;
+}
+
+.keypad-btn-cute .heart-sub {
+  font-size: 0.65rem;
+  color: #FB6F92;
+  margin-top: 2px;
+}
+
+/* Bouncy Jelly Button & Soft Pink Shadow */
+.btn-jelly {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 24px -4px rgba(251, 111, 146, 0.42);
+  user-select: none;
+}
+
+.btn-jelly:hover {
+  transform: translateY(-3px) scale(1.025);
+  box-shadow: 0 16px 30px -4px rgba(251, 111, 146, 0.55);
+}
+
+.btn-jelly:active {
+  animation: jellyAnimation 0.55s ease;
+}
+
+@keyframes jellyAnimation {
+  0% { transform: scale(1, 1); }
+  25% { transform: scale(0.92, 1.08); }
+  50% { transform: scale(1.06, 0.94); }
+  75% { transform: scale(0.98, 1.02); }
+  100% { transform: scale(1, 1); }
+}
+
+.btn-soft {
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 16px -2px rgba(255, 179, 198, 0.35);
+}
+
+.btn-soft:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -2px rgba(255, 179, 198, 0.5);
+}
+
+.btn-soft:active {
+  transform: scale(0.95);
+}
+
+/* Polaroid Photo Card styling */
+.polaroid-frame {
+  background: #ffffff;
+  padding: 14px 14px 22px 14px;
+  box-shadow: 0 18px 36px -10px rgba(100, 50, 70, 0.22), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  transform: rotate(-2.5deg);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.polaroid-frame:hover {
+  transform: rotate(0deg) scale(1.03);
+  box-shadow: 0 24px 44px -8px rgba(251, 111, 146, 0.35);
+}
+
+/* Polaroid Click-to-Wiggle Animation */
+.polaroid-wiggle {
+  animation: polaroidWiggleAnim 0.75s ease-in-out;
+}
+
+@keyframes polaroidWiggleAnim {
+  0%, 100% { transform: rotate(-2.5deg) scale(1); }
+  20% { transform: rotate(4deg) scale(1.06); }
+  40% { transform: rotate(-5deg) scale(1.04); }
+  60% { transform: rotate(3deg) scale(1.02); }
+  80% { transform: rotate(-1deg) scale(1.01); }
+}
+
+/* Polaroid Entrance Animation on Unlock */
+.polaroid-entrance {
+  animation: polaroidEntranceAnim 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes polaroidEntranceAnim {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.85) rotate(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1) rotate(-2.5deg);
+  }
+}
+
+/* Washi Tape Accent on Polaroid */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1deg);
+  width: 90px;
+  height: 26px;
+  background-color: rgba(255, 179, 198, 0.65);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border-left: 2px dashed rgba(255, 255, 255, 0.5);
+  border-right: 2px dashed rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+/* Secret Love Letter styling */
+.parchment-paper {
+  background: #FFFDF9;
+  background-image: 
+    linear-gradient(rgba(255, 179, 198, 0.14) 1px, transparent 1px);
+  background-size: 100% 28px;
+  border-left: 4px solid #FB6F92;
+  border-radius: 16px;
+  box-shadow: inset 0 0 30px rgba(255, 229, 236, 0.45), 0 8px 24px -6px rgba(100, 30, 50, 0.08);
+}
+
+/* Animated Love Envelope Container */
+.envelope-wrapper {
+  position: relative;
+  background: #FFE5EC;
+  border: 2px solid #FFB3C6;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px -6px rgba(201, 24, 74, 0.15);
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.envelope-flap {
+  width: 100%;
+  height: 28px;
+  background: linear-gradient(180deg, #FFCCD5 0%, #FFE5EC 100%);
+  border-bottom: 2px solid #FFB3C6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Typewriter Cursor */
+.typewriter-cursor {
+  display: inline-block;
+  font-weight: 700;
+  margin-left: 2px;
+  animation: typewriterBlink 0.8s infinite;
+}
+
+@keyframes typewriterBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Floating animation */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+/* Heartbeat pulse animation */
+@keyframes pulseHeart {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  70% { transform: scale(1); }
+}
+
+.animate-heartbeat {
+  animation: pulseHeart 1.8s ease-in-out infinite;
+}
+
+/* Shimmer highlight */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #FB6F92 0%, #FF8FAB 30%, #C9184A 50%, #FF8FAB 70%, #FB6F92 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF8F0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFB3C6;
+  border-radius: 999px;
+  border: 2px solid #FFF8F0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FB6F92;
+}
+
+/* PIN Input digit block */
+.pin-digit-box {
+  width: 48px;
+  height: 58px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 14px;
+  border: 2px solid #FFB3C6;
+  background: #ffffff;
+  color: #C9184A;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(251, 111, 146, 0.12);
+}
+
+.pin-digit-box:focus {
+  outline: none;
+  border-color: #FB6F92;
+  box-shadow: 0 0 0 4px rgba(251, 111, 146, 0.25), 0 6px 14px rgba(251, 111, 146, 0.2);
+  transform: translateY(-2px);
+}
+
+/* PIN Indicator Dot (Tahap 2 Lock Screen) */
+.pin-indicator-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px dashed #FFCCD5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.pin-indicator-dot.filled {
+  border-style: solid;
+  border-color: #FB6F92;
+  background: linear-gradient(135deg, #FFF0F3 0%, #FFE5EC 100%);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(251, 111, 146, 0.35);
+  animation: dotPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes dotPop {
+  0% { transform: scale(0.8); }
+  60% { transform: scale(1.22); }
+  100% { transform: scale(1.1); }
+}
+
+/* Teasing roast alert pop in */
+@keyframes teasingPopIn {
+  0% { opacity: 0; transform: translateY(8px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.teasing-alert-enter {
+  animation: teasingPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Shake Animation for Wrong PIN */
+@keyframes shakeAnimation {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-12px) rotate(-1.5deg); }
+  30% { transform: translateX(12px) rotate(1.5deg); }
+  45% { transform: translateX(-9px) rotate(-1deg); }
+  60% { transform: translateX(9px) rotate(1deg); }
+  75% { transform: translateX(-4px) rotate(-0.5deg); }
+  90% { transform: translateX(4px) rotate(0.5deg); }
+}
+
+.animate-shake {
+  animation: shakeAnimation 0.5s ease-in-out;
+}
+
+/* Sweet audio visualizer wave bars */
+.music-bar {
+  width: 4px;
+  border-radius: 4px;
+  background: #FB6F92;
+  animation: musicBounce 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes musicBounce {
+  0% { height: 6px; }
+  100% { height: 26px; }
+}
+
+.music-bar:nth-child(1) { animation-delay: 0.1s; }
+.music-bar:nth-child(2) { animation-delay: 0.3s; }
+.music-bar:nth-child(3) { animation-delay: 0.5s; }
+.music-bar:nth-child(4) { animation-delay: 0.2s; }
+.music-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* Modal backdrop animation */
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popupModal {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-enter {
+  animation: fadeInBackdrop 0.25s ease-out forwards;
+}
+
+.modal-content-enter {
+  animation: popupModal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ============================================================
+   Tahap 3: Mini Pastel Pink Vinyl Player Widget
+   ============================================================ */
+.vinyl-widget-box {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2px solid #FFB3C6;
+  border-radius: 9999px;
+  box-shadow: 0 12px 30px -6px rgba(251, 111, 146, 0.38);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+
+.vinyl-widget-box:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 36px -4px rgba(251, 111, 146, 0.5);
+}
+
+/* Vinyl Disc */
+.vinyl-disc {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFB3C6 0%, #4A1525 22%, #2B0B16 46%, #4A1525 68%, #2B0B16 88%, #FFCCD5 100%);
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28), inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+}
+
+.vinyl-disc::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+}
+
+.vinyl-disc::after {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  border: 1px dotted rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+/* Vinyl Center Label */
+.vinyl-center-label {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFE5EC 0%, #FB6F92 100%);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Vinyl Continuous Spin Animation */
+@keyframes spinVinylRecord {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-spinning {
+  animation: spinVinylRecord 3.8s linear infinite;
+}
+
+.vinyl-paused {
+  animation-play-state: paused !important;
+}
+
+/* Stylus Tonearm Needle */
+.vinyl-tonearm {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  width: 24px;
+  height: 34px;
+  pointer-events: none;
+  transform-origin: 20px 4px;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: rotate(-32deg);
+  z-index: 10;
+}
+
+.vinyl-tonearm.playing {
+  transform: rotate(6deg);
+}
+
+/* ============================================================
+   Tahap 3: IG Story Download Button Styling
+   ============================================================ */
+.btn-ig-story {
+  background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 10px 24px -4px rgba(221, 42, 123, 0.45);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-ig-story:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 16px 32px -4px rgba(221, 42, 123, 0.65);
+}
+
+.btn-ig-story:active {
+  animation: jellyAnimation 0.5s ease;
+}
+
