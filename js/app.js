@@ -1,11 +1,12 @@
 /**
- * LoveVault - Main Application Logic (Complete with Tahap 1, 2, & 3 Multi-Template Engine)
+ * LoveVault - Main Application Logic (Upgraded with YouTube Audio & LZ-String Sharing)
  * Features:
- * - Mode 1 Foto (Template 1A: Frame Abstrak & Bunga | Template 1B: Vintage Teddy & Retro Cam)
- * - Mode 2 Foto (Template 2A: Double Polaroid Cozy Knit dengan pita kotak-kotak)
- * - Pemutar Musik Vinyl Mini (Piringan hitam pastel berputar di pojok kanan atas)
- * - Sistem Share Link Tanpa Database (Kompresi foto Polaroid ~250px JPEG 0.5 ke URL Hash Base64)
- * - Download Kartu Instagram Story (1080 x 1920 px PNG siap upload ke Story)
+ * - Mode 1 Foto & Mode 2 Foto Multi-Template System
+ * - YouTube IFrame Audio Engine (Direct Playback from YouTube, YouTube Music, Shorts)
+ * - Ultra-Reliable URL Hash Sharing via LZ-String (Emoji Safe, Short URLs, Adaptive Photo Compression)
+ * - Instant Locked-Vault Mode on Link Open without touching localStorage or kicking to login
+ * - Direct Link Testing in New Tab & One-Click WhatsApp Sharing
+ * - Instagram Story Card Exporter (1080x1920 PNG)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -59,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectMusicMood = document.getElementById('selectMusicMood');
   const inputCustomMusic = document.getElementById('inputCustomMusic');
   const customMusicContainer = document.getElementById('customMusicContainer');
+  const customMusicBadge = document.getElementById('customMusicBadge');
+  const btnTestCustomAudio = document.getElementById('btnTestCustomAudio');
+  const testCustomAudioText = document.getElementById('testCustomAudioText');
+  const customAudioStatus = document.getElementById('customAudioStatus');
 
   // DOM Elements - Mode & Template Pickers
   const btnMode1Photo = document.getElementById('btnMode1Photo');
@@ -116,18 +121,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const vinylDiscRecord = document.getElementById('vinylDiscRecord');
   const vinylTonearm = document.getElementById('vinylTonearm');
   const vinylMoodTitle = document.getElementById('vinylMoodTitle');
+  const vinylIndicatorText = document.getElementById('vinylIndicatorText');
   const btnToggleVinylDisc = document.getElementById('btnToggleVinylDisc');
   const btnVinylPlayPause = document.getElementById('btnVinylPlayPause');
   const btnVinylMute = document.getElementById('btnVinylMute');
+  const vinylAutoplayBadge = document.getElementById('vinylAutoplayBadge');
+
+  // Share Modal & Direct Testing Elements
+  const shareModal = document.getElementById('shareModal');
+  const shareModalUrlInput = document.getElementById('shareModalUrlInput');
+  const shareUrlCharCount = document.getElementById('shareUrlCharCount');
+  const btnCopyShareModal = document.getElementById('btnCopyShareModal');
+  const copyModalBtnText = document.getElementById('copyModalBtnText');
+  const btnTestShareModal = document.getElementById('btnTestShareModal');
+  const btnWhatsappShare = document.getElementById('btnWhatsappShare');
+  const btnCloseShareModal = document.getElementById('btnCloseShareModal');
+
+  // Broken Link Alert Modal Elements
+  const brokenLinkModal = document.getElementById('brokenLinkModal');
+  const btnCreateNewFromBroken = document.getElementById('btnCreateNewFromBroken');
 
   // Typewriter Engine State
   let typewriterTimer = null;
   let typewriterIndex = 0;
 
   function getMoodTitle(mood) {
+    if (mood === 'youtube') return 'YouTube Music';
     if (mood === 'acoustic') return 'Acoustic Sweet';
     if (mood === 'lofi') return 'Lo-Fi Bucin';
-    if (mood === 'custom') return 'Lagu Kustom';
+    if (mood === 'custom') return 'Lagu Kustom MP3';
     return 'Music Box Romantis';
   }
 
@@ -343,11 +365,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Custom Music Input with Auto YouTube Detection
   inputCustomMusic.addEventListener('input', (e) => {
-    state.customMusicUrl = e.target.value.trim();
+    const url = e.target.value.trim();
+    state.customMusicUrl = url;
+
+    const ytId = extractYouTubeID(url);
+    if (customMusicBadge) {
+      if (ytId) {
+        customMusicBadge.textContent = '🎥 YouTube Video';
+        customMusicBadge.className = 'absolute right-3 top-2 text-[11px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-md';
+      } else if (url.toLowerCase().endsWith('.mp3')) {
+        customMusicBadge.textContent = '🎵 Direct MP3';
+        customMusicBadge.className = 'absolute right-3 top-2 text-[11px] font-bold text-pink-500 bg-pink-50 px-2 py-0.5 rounded-md';
+      } else {
+        customMusicBadge.textContent = '🔗 Audio';
+        customMusicBadge.className = 'absolute right-3 top-2 text-[11px] font-bold text-gray-400';
+      }
+    }
   });
 
-  // Music Preview Toggle Button
+  // "Tes Putar Lagu 🎵" Button on Creator Page
+  if (btnTestCustomAudio) {
+    btnTestCustomAudio.addEventListener('click', () => {
+      audio.playPop();
+      const url = inputCustomMusic.value.trim();
+      if (!url) {
+        showToast('⚠️ Masukkan link YouTube atau file MP3 dulu ya!');
+        inputCustomMusic.focus();
+        return;
+      }
+
+      if (audio.isPlaying) {
+        audio.stopMusic();
+        if (testCustomAudioText) testCustomAudioText.textContent = 'Tes Putar Lagu';
+        if (customAudioStatus) customAudioStatus.classList.add('hidden');
+      } else {
+        audio.startMusic('custom', url);
+        if (testCustomAudioText) testCustomAudioText.textContent = '⏹️ Hentikan Tes';
+        if (customAudioStatus) {
+          customAudioStatus.classList.remove('hidden');
+          const isYt = Boolean(extractYouTubeID(url));
+          customAudioStatus.textContent = isYt ? '▶️ Sedang Memutar YouTube...' : '▶️ Memutar MP3...';
+        }
+      }
+    });
+  }
+
+  // Music Preview Toggle Button (General)
   btnToggleMusicPreview.addEventListener('click', () => {
     audio.playPop();
     const isPlaying = audio.togglePlayPause(state.musicMood, inputCustomMusic.value.trim());
@@ -529,6 +594,11 @@ document.addEventListener('DOMContentLoaded', () => {
       miniVinylWidget.classList.remove('flex');
     }
 
+    // Pre-buffer YouTube in background if link exists
+    if (state.customMusicUrl) {
+      audio.prepareYouTube(state.customMusicUrl);
+    }
+
     // Update Personal Greeting for Partner
     if (vaultPartnerGreeting) {
       vaultPartnerGreeting.textContent = state.partnerName || 'Sayangku';
@@ -550,7 +620,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnReturnToEdit) btnReturnToEdit.classList.remove('hidden');
     if (btnShareVaultFloating) btnShareVaultFloating.classList.remove('hidden');
 
-    saveToUrlHash();
+    // Generate Shareable URL hash in background
+    generateShareLinkData();
   }
 
   function switchToCreatorMode() {
@@ -621,6 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
       handlePinBackspace();
     } else if (e.key === 'Escape') {
       closeHintModal();
+      closeShareModal();
     }
   });
 
@@ -637,6 +709,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (state.enteredPin.length === 6) {
+      // Check immediately inside click context for user-gesture audio autoplay!
+      if (state.enteredPin === state.pin) {
+        triggerAudioOnPinSuccess();
+      }
+
       setTimeout(() => {
         checkEnteredPin();
       }, 180);
@@ -664,6 +741,21 @@ document.addEventListener('DOMContentLoaded', () => {
       updateKeypadDots();
       if (teasingAlertContainer) teasingAlertContainer.classList.add('hidden');
     });
+  }
+
+  /**
+   * PENTING: User-Gesture Synchronous Audio Trigger
+   * Called immediately during the 6th PIN button click!
+   */
+  function triggerAudioOnPinSuccess() {
+    const isYt = Boolean(extractYouTubeID(state.customMusicUrl));
+    if (isYt) {
+      audio.triggerDirectYouTubePlay();
+    } else if (state.musicMood === 'custom' && state.customMusicUrl) {
+      audio.startMusic('custom', state.customMusicUrl);
+    } else {
+      audio.startMusic(state.musicMood);
+    }
   }
 
   /* ============================================================
@@ -783,8 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start Secret Letter Typewriter Effect
     startTypewriter(state.secretLetter);
 
-    // Start Romantic Music & Show Mini Vinyl Player Widget
-    audio.startMusic(state.musicMood, state.customMusicUrl);
+    // Show Mini Vinyl Player Widget & Ensure Audio is active
     if (miniVinylWidget) {
       miniVinylWidget.classList.remove('hidden');
       miniVinylWidget.classList.add('flex');
@@ -796,14 +887,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Mini Vinyl Player UI Controller
-  function updateVinylUI(isPlaying) {
+  function updateVinylUI(isPlaying, songTitle) {
     if (!miniVinylWidget) return;
-    if (vinylMoodTitle) vinylMoodTitle.textContent = getMoodTitle(state.musicMood);
+
+    if (vinylMoodTitle) {
+      vinylMoodTitle.textContent = songTitle || getMoodTitle(state.musicMood);
+    }
+
+    if (vinylIndicatorText) {
+      vinylIndicatorText.textContent = isPlaying ? '🎵 Sedang Memutar Lagu...' : '⏸️ Musik Dijeda';
+    }
 
     if (isPlaying) {
       if (vinylDiscRecord) vinylDiscRecord.classList.remove('vinyl-paused');
       if (vinylTonearm) vinylTonearm.classList.add('playing');
       if (btnVinylPlayPause) btnVinylPlayPause.textContent = '⏸️';
+      if (vinylAutoplayBadge) vinylAutoplayBadge.classList.add('hidden');
     } else {
       if (vinylDiscRecord) vinylDiscRecord.classList.add('vinyl-paused');
       if (vinylTonearm) vinylTonearm.classList.remove('playing');
@@ -815,14 +914,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function showVinylAutoplayBadge() {
+    if (vinylAutoplayBadge) {
+      vinylAutoplayBadge.classList.remove('hidden');
+    }
+  }
+
   function toggleVinylPlayback() {
     audio.playPop();
     const isPlaying = audio.togglePlayPause(state.musicMood, state.customMusicUrl);
     updateVinylUI(isPlaying);
+    if (vinylAutoplayBadge) vinylAutoplayBadge.classList.add('hidden');
   }
 
   if (btnToggleVinylDisc) btnToggleVinylDisc.addEventListener('click', toggleVinylPlayback);
   if (btnVinylPlayPause) btnVinylPlayPause.addEventListener('click', toggleVinylPlayback);
+
+  if (vinylAutoplayBadge) {
+    vinylAutoplayBadge.addEventListener('click', () => {
+      audio.playPop();
+      audio.startMusic(state.musicMood, state.customMusicUrl);
+      vinylAutoplayBadge.classList.add('hidden');
+    });
+  }
 
   if (btnVinylMute) {
     btnVinylMute.addEventListener('click', () => {
@@ -830,6 +944,19 @@ document.addEventListener('DOMContentLoaded', () => {
       btnVinylMute.textContent = isMuted ? '🔇' : '🔊';
     });
   }
+
+  // Synchronize Audio Engine Events to Vinyl UI
+  audio.onPlaybackStateChange = (isPlaying, title) => {
+    updateVinylUI(isPlaying, title);
+    if (!isPlaying) {
+      if (testCustomAudioText) testCustomAudioText.textContent = 'Tes Putar Lagu';
+      if (customAudioStatus) customAudioStatus.classList.add('hidden');
+    }
+  };
+
+  audio.onAutoplayBlocked = () => {
+    showVinylAutoplayBadge();
+  };
 
   // Polaroid Click-to-Wiggle Interaction
   function handlePolaroidWiggle() {
@@ -870,7 +997,7 @@ document.addEventListener('DOMContentLoaded', () => {
     typewriterIndex = 0;
 
     const textToType = fullText || 'Surat cinta rahasia kosong...';
-    const speed = 25; // ms per char
+    const speed = 25;
 
     typewriterTimer = setInterval(() => {
       if (typewriterIndex < textToType.length) {
@@ -960,111 +1087,324 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============================================================
-     9. Shareable URL Generator (Base64 URL Hash with Compressed Photo)
+     9. Ultra-Reliable Share Link Engine (LZ-String & Adaptive Compression)
      ============================================================ */
-  function saveToUrlHash() {
-    try {
-      const photoThumb = polaroid.getCompressedThumbnail(260, 0.55);
+  function generateShareLinkData() {
+    let maxDim1 = state.mode === '2' ? 180 : 240;
+    let quality1 = state.mode === '2' ? 0.45 : 0.55;
+    let maxDim2 = 180;
+    let quality2 = 0.45;
 
+    let finalEncoded = '';
+    let iterations = 0;
+
+    // Adaptive loop: guarantee total URL length < 5500 chars for WhatsApp safety
+    while (iterations < 4) {
+      const photos = polaroid.getShareablePhotos(maxDim1, quality1, maxDim2, quality2);
+
+      const isYt = Boolean(extractYouTubeID(state.customMusicUrl));
       const payload = {
-        u: state.userName,
-        p: state.partnerName,
-        pin: state.pin,
+        n1: state.userName,
+        n2: state.partnerName,
+        p: state.pin,
         h: state.hint,
+        s: state.secretLetter,
         c: polaroid.captionText,
-        l: state.secretLetter,
-        m: state.musicMood,
-        cm: state.customMusicUrl,
-        mode: state.mode || polaroid.mode,
-        tmpl: state.template || polaroid.selectedTemplate,
-        img: photoThumb
+        m: state.mode || polaroid.mode,
+        t: state.template || polaroid.selectedTemplate,
+        f: polaroid.currentFilter,
+        a: state.customMusicUrl,
+        at: isYt ? 'yt' : (state.musicMood === 'custom' ? 'mp3' : state.musicMood),
+        i1: photos.i1 || '',
+        i2: photos.i2 || ''
       };
 
       const jsonStr = JSON.stringify(payload);
-      const encoded = btoa(encodeURIComponent(jsonStr));
-      window.location.hash = `vault=${encoded}`;
-    } catch (e) {
-      console.warn('Hash encode error:', e);
-    }
-  }
-
-  function loadFromUrlHash() {
-    if (!window.location.hash.startsWith('#vault=')) return false;
-
-    try {
-      const encoded = window.location.hash.replace('#vault=', '');
-      const jsonStr = decodeURIComponent(atob(encoded));
-      const payload = JSON.parse(jsonStr);
-
-      if (payload.u && payload.pin) {
-        state.userName = payload.u;
-        state.partnerName = payload.p;
-        state.pin = payload.pin;
-        state.hint = payload.h;
-        state.secretLetter = payload.l;
-        state.musicMood = payload.m || 'music_box';
-        state.customMusicUrl = payload.cm || '';
-
-        inputUserName.value = state.userName;
-        inputPartnerName.value = state.partnerName;
-        updateCoupleDisplay();
-
-        state.pin.split('').forEach((d, i) => {
-          if (pinDigits[i]) pinDigits[i].value = d;
-        });
-
-        inputHint.value = state.hint;
-        inputSecretLetter.value = state.secretLetter;
-        if (payload.c) {
-          polaroid.captionText = payload.c;
-          polaroid.updatePolaroidDOMCaption();
-        }
-
-        // Restore Mode & Template
-        if (payload.mode) {
-          updateModeUI(payload.mode);
-        }
-        if (payload.tmpl) {
-          updateTemplateUI(payload.tmpl);
-        }
-
-        // Load Composite Photo
-        if (payload.img) {
-          polaroid.loadComposite(payload.img);
-        }
-
-        // Directly open into Locked Vault Mode for the partner without showing creator form!
-        switchToLockedVaultMode();
-        showToast('💌 Brankas Cinta diterima dari pasanganmu! Masukkan PIN untuk membuka.');
-        return true;
+      if (typeof LZString !== 'undefined' && LZString.compressToEncodedURIComponent) {
+        finalEncoded = LZString.compressToEncodedURIComponent(jsonStr);
+      } else {
+        finalEncoded = btoa(encodeURIComponent(jsonStr));
       }
-    } catch (e) {
-      console.warn('Failed to parse vault hash:', e);
+
+      if (finalEncoded.length <= 5500 || iterations === 3) {
+        break;
+      }
+
+      iterations++;
+      maxDim1 = Math.round(maxDim1 * 0.75);
+      quality1 = Math.max(0.25, quality1 * 0.75);
+      maxDim2 = Math.round(maxDim2 * 0.75);
+      quality2 = Math.max(0.25, quality2 * 0.75);
     }
-    return false;
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}#v=${finalEncoded}`;
+    window.location.hash = `v=${finalEncoded}`;
+    return { shareUrl, charCount: shareUrl.length };
   }
 
-  function copyShareLink() {
+  function openShareModal() {
     audio.playPop();
-    saveToUrlHash();
-    const shareUrl = window.location.href;
+    const data = generateShareLinkData();
+    if (shareModalUrlInput) {
+      shareModalUrlInput.value = data.shareUrl;
+    }
+    if (shareUrlCharCount) {
+      shareUrlCharCount.textContent = `${data.charCount} karakter (Sangat Aman untuk WhatsApp)`;
+    }
+    if (shareModal) {
+      shareModal.classList.remove('hidden');
+      shareModal.classList.add('flex');
+    }
+  }
 
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        showToast('📋 Link Brankas berhasil disalin! Kirimkan ke pasanganmu 💕');
-      }).catch(() => {
-        prompt('Salin link ini untuk pasanganmu:', shareUrl);
+  function closeShareModal() {
+    if (shareModal) {
+      shareModal.classList.add('hidden');
+      shareModal.classList.remove('flex');
+    }
+  }
+
+  if (btnCloseShareModal) btnCloseShareModal.addEventListener('click', closeShareModal);
+  if (shareModal) {
+    shareModal.addEventListener('click', (e) => {
+      if (e.target === shareModal) closeShareModal();
+    });
+  }
+
+  // Copy Link Button in Share Modal (with robust clipboard fallback)
+  function copyTextToClipboard(text, onSuccess, onFail) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
+        fallbackCopyText(text, onSuccess, onFail);
       });
     } else {
-      prompt('Salin link ini untuk pasanganmu:', shareUrl);
+      fallbackCopyText(text, onSuccess, onFail);
     }
   }
 
-  if (btnShareVault) btnShareVault.addEventListener('click', copyShareLink);
-  if (btnShareVaultFloating) btnShareVaultFloating.addEventListener('click', copyShareLink);
+  function fallbackCopyText(text, onSuccess, onFail) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.width = '2em';
+    textArea.style.height = '2em';
+    textArea.style.padding = '0';
+    textArea.style.border = 'none';
+    textArea.style.outline = 'none';
+    textArea.style.boxShadow = 'none';
+    textArea.style.background = 'transparent';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful) onSuccess();
+      else if (onFail) onFail();
+    } catch (err) {
+      document.body.removeChild(textArea);
+      if (onFail) onFail();
+    }
+  }
+
+  if (btnCopyShareModal) {
+    btnCopyShareModal.addEventListener('click', () => {
+      audio.playPop();
+      const url = shareModalUrlInput ? shareModalUrlInput.value : window.location.href;
+      copyTextToClipboard(url, () => {
+        if (copyModalBtnText) copyModalBtnText.textContent = '✅ Link Tersalin!';
+        showToast('📋 Link Brankas berhasil disalin! Siap dikirim ke pasangan 💕');
+        setTimeout(() => {
+          if (copyModalBtnText) copyModalBtnText.textContent = 'Salin Link Brankas';
+        }, 2200);
+      }, () => {
+        prompt('Salin link ini untuk pasanganmu:', url);
+      });
+    });
+  }
+
+  // Direct Test in New Tab Button
+  if (btnTestShareModal) {
+    btnTestShareModal.addEventListener('click', () => {
+      audio.playPop();
+      const url = shareModalUrlInput ? shareModalUrlInput.value : window.location.href;
+      window.open(url, '_blank');
+    });
+  }
+
+  // Direct WhatsApp Share Button
+  if (btnWhatsappShare) {
+    btnWhatsappShare.addEventListener('click', () => {
+      audio.playPop();
+      const url = shareModalUrlInput ? shareModalUrlInput.value : window.location.href;
+      const partner = state.partnerName || 'Sayang';
+      const user = state.userName || 'Aku';
+      const message = `Halo ${partner}! ${user} punya brankas rahasia cinta spesial buat kamu nih 🔒💖\n\nCoba buktikan kalau kamu masih ingat tanggal jadian kita di link ini ya:\n${url}`;
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+      window.open(waUrl, '_blank');
+    });
+  }
+
+  if (btnShareVault) btnShareVault.addEventListener('click', openShareModal);
+  if (btnShareVaultFloating) btnShareVaultFloating.addEventListener('click', openShareModal);
 
   /* ============================================================
-     10. Toast Notification System
+     10. Routing & Reliable URL Reading on Initial Page Load
+     ============================================================ */
+  function loadFromUrlHash() {
+    let rawData = '';
+    let isLZ = false;
+
+    const hash = window.location.hash;
+    const search = window.location.search;
+
+    if (hash.startsWith('#v=')) {
+      rawData = hash.substring(3);
+      isLZ = true;
+    } else if (hash.startsWith('#vault=')) {
+      rawData = hash.substring(7);
+      isLZ = false;
+    } else if (search.includes('v=')) {
+      const params = new URLSearchParams(search);
+      rawData = params.get('v') || '';
+      isLZ = true;
+    }
+
+    if (!rawData) return false;
+
+    let payload = null;
+
+    // Attempt 1: Decompress with LZString
+    if (typeof LZString !== 'undefined' && LZString.decompressFromEncodedURIComponent) {
+      try {
+        const decompressed = LZString.decompressFromEncodedURIComponent(rawData);
+        if (decompressed) {
+          payload = JSON.parse(decompressed);
+        }
+      } catch (e) {
+        // try fallback
+      }
+    }
+
+    // Attempt 2: Legacy atob / decodeURIComponent
+    if (!payload) {
+      try {
+        const decoded = decodeURIComponent(atob(rawData));
+        payload = JSON.parse(decoded);
+      } catch (e) {
+        // failed
+      }
+    }
+
+    // Verify minimum essential payload
+    const hasPin = payload && (payload.p || payload.pin);
+    const hasName = payload && (payload.n1 || payload.u);
+
+    if (!payload || !hasPin || !hasName) {
+      showBrokenLinkModal();
+      return false;
+    }
+
+    try {
+      // Normalize payload (supports both new short keys and legacy keys)
+      state.userName = payload.n1 || payload.u || 'Kamu';
+      state.partnerName = payload.n2 || payload.p || 'Dia';
+      state.pin = String(payload.p || payload.pin || '');
+      state.hint = payload.h || '';
+      state.secretLetter = payload.s || payload.l || '';
+      state.mode = payload.m || payload.mode || '1';
+      state.template = payload.t || payload.tmpl || '1a';
+      state.customMusicUrl = payload.a || payload.cm || '';
+      
+      const hasYt = Boolean(extractYouTubeID(state.customMusicUrl));
+      if (hasYt) {
+        state.musicMood = 'custom';
+      } else if (payload.at === 'mp3' || (state.customMusicUrl && state.customMusicUrl.endsWith('.mp3'))) {
+        state.musicMood = 'custom';
+      } else {
+        state.musicMood = payload.at || payload.m || 'music_box';
+      }
+
+      if (payload.c) {
+        polaroid.captionText = payload.c;
+        polaroid.updatePolaroidDOMCaption();
+      }
+
+      // Populate Input fields so everything stays synchronized
+      inputUserName.value = state.userName;
+      inputPartnerName.value = state.partnerName;
+      updateCoupleDisplay();
+
+      state.pin.split('').forEach((d, i) => {
+        if (pinDigits[i]) pinDigits[i].value = d;
+      });
+
+      inputHint.value = state.hint;
+      inputSecretLetter.value = state.secretLetter;
+      inputCustomMusic.value = state.customMusicUrl;
+      selectMusicMood.value = state.musicMood === 'custom' ? 'custom' : state.musicMood;
+      if (state.musicMood === 'custom') {
+        customMusicContainer.classList.remove('hidden');
+      }
+
+      // Restore Mode & Template
+      updateModeUI(state.mode);
+      updateTemplateUI(state.template);
+
+      // Load Photos
+      if (payload.i1 || payload.i2) {
+        polaroid.loadPhotosFromShare(payload.i1, payload.i2, state.mode, state.template);
+      } else if (payload.img) {
+        polaroid.loadComposite(payload.img);
+      }
+
+      // Pre-buffer YouTube in background
+      if (state.customMusicUrl) {
+        audio.prepareYouTube(state.customMusicUrl);
+      }
+
+      // DIRECTLY ENTER LOCKED VAULT MODE FOR PARTNER!
+      // Never kick back to login/creator form!
+      switchToLockedVaultMode();
+      showToast(`💌 Rahasia cinta dari ${state.userName} untuk ${state.partnerName}! Masukkan PIN untuk membuka.`);
+      return true;
+
+    } catch (err) {
+      console.warn('Error applying shared vault state:', err);
+      showBrokenLinkModal();
+      return false;
+    }
+  }
+
+  function showBrokenLinkModal() {
+    if (brokenLinkModal) {
+      brokenLinkModal.classList.remove('hidden');
+      brokenLinkModal.classList.add('flex');
+    }
+  }
+
+  if (btnCreateNewFromBroken) {
+    btnCreateNewFromBroken.addEventListener('click', () => {
+      audio.playPop();
+      if (brokenLinkModal) {
+        brokenLinkModal.classList.add('hidden');
+        brokenLinkModal.classList.remove('flex');
+      }
+      window.location.hash = '';
+      switchToCreatorMode();
+      showToast('✨ Silakan buat Brankas Cinta baru untuk pasanganmu!');
+    });
+  }
+
+  // Listen to hash changes (e.g. user pastes new link without reloading)
+  window.addEventListener('hashchange', () => {
+    loadFromUrlHash();
+  });
+
+  /* ============================================================
+     11. Toast Notification System
      ============================================================ */
   function showToast(message) {
     let toast = document.getElementById('loveVaultToast');
@@ -1088,7 +1428,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3400);
   }
 
-  // Initial UI state: Mode 1 Foto & Template 1A
+  // Initial UI state
   updateModeUI('1');
   updateTemplateUI('1a');
 

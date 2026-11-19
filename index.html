@@ -28,6 +28,12 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/styles.css">
   
+  <!-- LZ-String Compression CDN (Emoji & Short URL Safe) -->
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
+  <!-- YouTube IFrame Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
 </head>
 <body class="bg-[#FFF8F0] min-h-screen relative text-[#4A3038] selection:bg-[#FFB3C6] selection:text-[#C9184A]">
@@ -35,7 +41,10 @@
   <!-- Canvas Background: Floating Hearts & Sakura Blossoms -->
   <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-  <!-- Mini Pastel Pink Vinyl Player Widget (Tahap 3) -->
+  <!-- Hidden YouTube IFrame Audio Player Container -->
+  <div id="ytPlayerContainer" style="width: 1px; height: 1px; opacity: 0.01; pointer-events: none; position: fixed; bottom: 0; right: 0;"></div>
+
+  <!-- Mini Pastel Pink Vinyl Player Widget (Tahap 3 & YouTube Synced) -->
   <div id="miniVinylWidget" class="hidden fixed top-20 right-4 sm:right-8 z-40 items-center gap-3 vinyl-widget-box px-3.5 py-2 shadow-xl transition-all duration-300">
     <!-- Spinning Vinyl Disc & Stylus Tonearm -->
     <div class="relative cursor-pointer group" id="btnToggleVinylDisc" title="Klik piringan untuk Putar / Jeda Musik">
@@ -61,8 +70,8 @@
         <span id="vinylMoodTitle" class="text-xs font-bold text-pink-700 tracking-tight">Music Box Romantis</span>
       </div>
       <div class="flex items-center justify-between gap-3 mt-0.5">
-        <span class="text-[10px] text-gray-500 font-semibold">BGM Cinta</span>
-        <div class="flex items-center gap-1.5">
+        <span id="vinylIndicatorText" class="text-[10px] text-pink-600 font-semibold truncate max-w-[140px]">🎵 Sedang Memutar Lagu...</span>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
           <!-- Mute/Unmute Button -->
           <button type="button" id="btnVinylMute" class="text-xs hover:scale-125 transition-transform" title="Bisukan / Nyalakan Suara">
             🔊
@@ -74,6 +83,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Autoplay Blocked Tap Badge (Membal Cute) -->
+  <div id="vinylAutoplayBadge" class="hidden fixed top-36 right-4 sm:right-8 z-40 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-lg border-2 border-white cursor-pointer select-none animate-bounce">
+    Tap Vinyl untuk Putar Musik 🎵
   </div>
 
   <!-- Sticky Top Navigation Bar -->
@@ -489,7 +503,7 @@
                   <option value="music_box" selected>🎵 1. Music Box Romantis (Melodi Lullaby Bell Abadi)</option>
                   <option value="acoustic">🎸 2. Acoustic Sweet (Arpeggio Gitar Romantis Hangat)</option>
                   <option value="lofi">☕ 3. Lo-Fi Bucin (Chord Hangat Vintage Santai)</option>
-                  <option value="custom">🔗 4. Link MP3 Kustom (Masukkan URL Audio Sendiri)</option>
+                  <option value="custom">🔗 4. Link YouTube / MP3 Kustom (Lagu Romantis Pilihan)</option>
                 </select>
               </div>
 
@@ -512,19 +526,42 @@
               </div>
             </div>
 
-            <!-- Custom URL Input (Hidden by default) -->
+            <!-- Custom URL Input (YouTube & MP3) -->
             <div id="customMusicContainer" class="hidden mt-3 pt-3 border-t border-pink-50">
-              <label for="inputCustomMusic" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-                URL File MP3 Kustom
-              </label>
-              <input 
-                type="url" 
-                id="inputCustomMusic" 
-                placeholder="https://example.com/lagu-kita.mp3" 
-                class="w-full px-4 py-2 rounded-xl border border-pink-200 focus:border-[#FB6F92] bg-white/90 text-xs transition-all outline-none"
-              >
-              <p class="text-[11px] text-gray-400 mt-1">
-                Catatan: Pastikan link MP3 langsung dapat diakses secara publik (Direct Link / CORS enabled).
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="inputCustomMusic" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Masukkan Link YouTube / Link MP3 Lagu Romantis
+                </label>
+                <span class="text-[10px] text-pink-500 font-semibold">YouTube / YouTube Music / MP3</span>
+              </div>
+              <div class="relative">
+                <input 
+                  type="url" 
+                  id="inputCustomMusic" 
+                  placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/... atau link MP3" 
+                  class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-xs transition-all outline-none pr-10"
+                >
+                <span id="customMusicBadge" class="absolute right-3 top-2.5 text-sm text-gray-400">🎵</span>
+              </div>
+
+              <!-- Quick Test Button for Creator -->
+              <div class="flex flex-wrap items-center justify-between gap-2 mt-2.5">
+                <button 
+                  type="button" 
+                  id="btnTestCustomAudio" 
+                  class="btn-soft bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
+                >
+                  <span>🎵</span>
+                  <span id="testCustomAudioText">Tes Putar Lagu</span>
+                </button>
+
+                <span id="customAudioStatus" class="text-[11px] font-semibold text-pink-600 hidden">
+                  ▶️ Memutar preview lagu...
+                </span>
+              </div>
+
+              <p class="text-[11px] text-gray-400 mt-2 leading-snug">
+                💡 <b>Mendukung:</b> Format link <code>youtube.com/watch?v=...</code>, <code>youtu.be/...</code>, YouTube Shorts, YouTube Music, dan direct file MP3.
               </p>
             </div>
           </div>
@@ -886,8 +923,106 @@
     </div>
   </div>
 
+  <!-- Share Link Modal Dialog (With Direct Test & WhatsApp Share) -->
+  <div id="shareModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full p-6 sm:p-7 text-center modal-content-enter border-2 border-pink-300 shadow-2xl relative">
+      <div class="w-14 h-14 rounded-full bg-pink-100 text-rose-600 flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+        💌
+      </div>
+      
+      <h3 class="text-xl font-extrabold text-[#4A1525] font-quicksand">
+        Bagikan Brankas Cinta ke Pasanganmu 💕
+      </h3>
+      <p class="text-xs sm:text-sm text-gray-600 mt-1 mb-4 leading-relaxed">
+        Link brankas ini sudah memuat data foto, surat, dan lagu pilihanmu tanpa perlu database atau server. Kirim ke WhatsApp pasanganmu!
+      </p>
+
+      <!-- Readonly URL box with auto-select -->
+      <div class="mb-4 text-left">
+        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+          Link Khusus Pasanganmu:
+        </label>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="shareModalUrlInput" 
+            readonly 
+            class="w-full px-3.5 py-2.5 rounded-xl border-2 border-pink-200 bg-pink-50/60 text-xs font-mono text-pink-900 select-all focus:outline-none focus:border-rose-400"
+          >
+          <div class="flex items-center justify-between text-[10px] text-gray-400 mt-1">
+            <span class="text-emerald-600 font-semibold">✨ Kompresi LZ-String Aman Emoji</span>
+            <span id="shareUrlCharCount">0 karakter</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+        <!-- 1. Salin Link -->
+        <button 
+          type="button" 
+          id="btnCopyShareModal" 
+          class="btn-jelly bg-gradient-to-r from-[#FB6F92] to-[#C9184A] text-white font-bold py-3 px-3 rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-1.5"
+        >
+          <span>📋</span>
+          <span id="copyModalBtnText">Salin Link Brankas</span>
+        </button>
+
+        <!-- 2. Tes Buka di Tab Baru -->
+        <button 
+          type="button" 
+          id="btnTestShareModal" 
+          class="btn-soft bg-white border-2 border-rose-300 text-rose-700 hover:bg-rose-50 font-bold py-3 px-3 rounded-xl text-xs sm:text-sm shadow-sm flex items-center justify-center gap-1.5"
+        >
+          <span>🔗</span>
+          <span>Tes di Tab Baru</span>
+        </button>
+      </div>
+
+      <!-- 3. Direct WhatsApp Share -->
+      <button 
+        type="button" 
+        id="btnWhatsappShare" 
+        class="w-full btn-soft bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 mb-3"
+      >
+        <span>💬</span>
+        <span>Kirim Langsung via WhatsApp</span>
+      </button>
+
+      <button 
+        type="button" 
+        id="btnCloseShareModal" 
+        class="text-xs text-gray-500 hover:text-gray-800 font-semibold py-1 transition-colors"
+      >
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- Broken / Corrupted Link Alert Modal -->
+  <div id="brokenLinkModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full p-6 text-center modal-content-enter border-2 border-rose-300 shadow-2xl">
+      <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">
+        💔
+      </div>
+      <h3 class="text-lg font-bold text-[#4A1525] mb-2">Link Brankas Tidak Lengkap</h3>
+      <p class="text-sm font-medium text-gray-700 bg-rose-50/80 p-4 rounded-xl border border-rose-100 mb-5 leading-relaxed">
+        Link brankas tidak lengkap atau rusak, minta pasanganmu kirim ulang link-nya ya 💔
+      </p>
+      <button 
+        type="button" 
+        id="btnCreateNewFromBroken" 
+        class="btn-jelly w-full bg-[#FB6F92] hover:bg-[#C9184A] text-white font-bold py-3 rounded-xl text-sm shadow-md flex items-center justify-center gap-2"
+      >
+        <span>✨</span>
+        <span>Buat Brankas Baru</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/particles.js"></script>
+  <script src="js/templatesData.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/polaroid.js"></script>
   <script src="js/storyCard.js"></script>

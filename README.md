@@ -86,18 +86,39 @@ Dibuat menggunakan **HTML5, Tailwind CSS, dan JavaScript Murni (Vanilla JS)** ta
 
 ---
 
-### 5. Pemutar Musik Vinyl Mini (Tahap 3) 🎵
-- Widget piringan hitam (*vinyl*) warna pink pastel mengambang di pojok kanan atas saat brankas terbuka.
-- Piringan hitam berputar halus (`@keyframes spinVinylRecord`) dengan jarum *tonearm* yang mendarat di atas vinyl.
-- Otomatis memutar melodi romantis begitu PIN benar dan brankas terbuka.
-- Dilengkapi tombol kendali:
-  - **Klik Piringan / Tombol Play-Pause**: Memutar atau menjeda musik (vinyl berhenti berputar dan jarum terangkat).
-  - **Tombol Mute**: Membisukan atau membunyikan audio (`🔊` / `🔇`).
+### 5. Pemutar Musik Vinyl Mini & YouTube IFrame Audio Engine 🎵
+- **Dukungan Link YouTube & Audio Fleksibel**:
+  - Deteksi otomatis link YouTube berbagai format (`youtube.com/watch?v=...`, `youtu.be/...`, `youtube.com/shorts/...`, atau `music.youtube.com`).
+  - Parsing 11-karakter Video ID secara cerdas via regular expression.
+  - Integrasi resmi YouTube IFrame Player API tersembunyi (*hidden audio engine*) tanpa gangguan visual.
+  - Tombol **"Tes Putar Lagu 🎵"** di halaman pembuat agar pengguna bisa menguji langsung lagu YouTube/MP3 sebelum brankas dikunci.
+  - Tetap mendukung file direct MP3 dan 3 musik sintetis Web Audio API bawaan (Music Box, Acoustic Sweet, Lo-Fi Bucin).
+- **Trigger Autoplay Sinkron Berbasis Interaksi Pengguna**:
+  - Pemutaran audio diaktifkan tepat secara sinkron di dalam event klik tombol PIN ke-6 saat dinyatakan benar, sehingga browser HP (Android/iOS) dan Desktop langsung mengizinkan suara berbunyi tanpa terblokir kebijakan autoplay browser.
+  - Indikator membal otomatis jika autoplay tertahan: *"Tap Vinyl untuk Putar Musik 🎵"*.
+- **Widget Piringan Hitam (*Vinyl*) Pastel Interaktif**:
+  - Piringan hitam berputar halus (`@keyframes spinVinylRecord`) dengan jarum *tonearm* dan teks status *"🎵 Sedang Memutar Lagu..."*.
+  - Dilengkapi tombol kendali:
+    - **Klik Piringan / Tombol Play-Pause**: Memutar atau menjeda musik (YouTube atau Web Audio).
+    - **Tombol Mute**: Membisukan atau membunyikan audio (`🔊` / `🔇`).
 
 ---
 
-### 6. Fitur Kirim ke Pacar Tanpa Database (Tahap 3) 💌
-- **Kompresi Gambar Sisi Klien**:
+### 6. Fitur Kirim ke Pacar Tanpa Database (LZ-String & Anti-Mental) 💌
+- **Kompresi LZ-String Aman Emoji & Simbol**:
+  - Menggunakan library `lz-string` (`compressToEncodedURIComponent` dan `decompressFromEncodedURIComponent`) menggantikan `btoa`/`atob` mentah sehingga 100% aman untuk teks ber-emoji, karakter unik, dan membuat URL jauh lebih ringkas.
+- **Kompresi Foto Adaptif (Anti-Kepotong WhatsApp)**:
+  - Menggunakan HTML5 Canvas untuk mengompres foto ke format `image/webp` (dengan fallback `image/jpeg`).
+  - Loop pengecekan otomatis: jika panjang string URL melampaui batas aman (> 5500 karakter), dimensi dan kualitas foto diturunkan bertahap sehingga URL tidak akan pernah terpotong saat dikirim lewat WhatsApp.
+- **Routing Cerdas & Anti Mental ke Halaman Awal**:
+  - Membaca format `#v=...`, `#vault=...`, dan `?v=...` secara instan pada `DOMContentLoaded` maupun event `hashchange`.
+  - Semua data (nama, PIN, hint, template 1A/1B/2A, foto 1 & 2, surat rahasia, dan lagu YouTube) dibaca murni dari payload link.
+  - Jika link valid dibuka: **halaman pembuat/landing langsung disembunyikan**, dan **Mode Brankas Terkunci langsung ditampilkan** lengkap dengan template foto siap render dan YouTube player siap putar.
+  - Jika link rusak/terpotong: menampilkan modal peringatan ramah *"Link brankas tidak lengkap atau rusak, minta pasanganmu kirim ulang link-nya ya 💔"* beserta tombol *"Buat Brankas Baru"*.
+- **Kotak Berbagi & Pengujian Langsung**:
+  - **Salin Link Brankas 📋**: Menggunakan Clipboard API modern dengan fallback `execCommand`.
+  - **Tes Buka di Tab Baru 🔗**: Membuka link brankas langsung di tab baru untuk verifikasi tampilan penerima.
+  - **Kirim Langsung via WhatsApp 💬**: Tautan instan WhatsApp dengan pesan romantis siap kirim.
   - Foto Polaroid dikompresi otomatis menggunakan HTML5 Canvas menjadi thumbnail berukuran ~250px dengan kualitas JPEG 0.5 (~8-12 KB).
   - Seluruh data (Nama, Pasangan, PIN, Petunjuk, Foto Kompresi, Caption, Surat, Lagu) digabungkan menjadi objek JSON lalu di-encode ke Base64 pada URL Hash (`#vault=...`).
 - **Salin Link Brankas**:

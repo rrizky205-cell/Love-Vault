@@ -485,6 +485,86 @@ class PolaroidProcessor {
     }
   }
 
+  /**
+   * Tahap 3: Adaptive Single Photo Compressor for Share Payload
+   * Automatically compresses image using Canvas into image/webp (fallback to jpeg)
+   */
+  compressPhotoForShare(photoSource, maxDimension = 240, quality = 0.55) {
+    if (!photoSource) return '';
+    try {
+      const srcWidth = photoSource.width || photoSource.naturalWidth || 320;
+      const srcHeight = photoSource.height || photoSource.naturalHeight || 320;
+      
+      const scale = Math.min(1, maxDimension / Math.max(srcWidth, srcHeight));
+      const targetW = Math.max(50, Math.round(srcWidth * scale));
+      const targetH = Math.max(50, Math.round(srcHeight * scale));
+
+      const c = document.createElement('canvas');
+      c.width = targetW;
+      c.height = targetH;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(photoSource, 0, 0, targetW, targetH);
+
+      let format = 'image/webp';
+      let dataUrl = c.toDataURL(format, quality);
+      if (!dataUrl.startsWith('data:image/webp')) {
+        format = 'image/jpeg';
+        dataUrl = c.toDataURL(format, quality);
+      }
+      return dataUrl;
+    } catch (e) {
+      console.warn('Adaptive photo compression error:', e);
+      return '';
+    }
+  }
+
+  /**
+   * Get compressed photo strings for share payload based on current mode
+   */
+  getShareablePhotos(maxDim1 = 240, quality1 = 0.55, maxDim2 = 180, quality2 = 0.45) {
+    const res = { i1: '', i2: '' };
+    if (this.mode === '2') {
+      if (this.photo1) res.i1 = this.compressPhotoForShare(this.photo1, maxDim2, quality2);
+      if (this.photo2) res.i2 = this.compressPhotoForShare(this.photo2, maxDim2, quality2);
+    } else {
+      if (this.photo1) res.i1 = this.compressPhotoForShare(this.photo1, maxDim1, quality1);
+    }
+    return res;
+  }
+
+  /**
+   * Load photos from shared payload and redraw full template in HD
+   */
+  async loadPhotosFromShare(i1, i2, mode, template) {
+    if (mode) this.setMode(mode);
+    if (template) this.setTemplate(template);
+
+    if (!this.templatesLoaded) {
+      await this.preloadTemplates();
+    }
+
+    const loadImg = (src) => {
+      return new Promise((resolve) => {
+        if (!src) return resolve(null);
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    };
+
+    const [loaded1, loaded2] = await Promise.all([
+      loadImg(i1),
+      loadImg(i2)
+    ]);
+
+    if (loaded1) this.photo1 = loaded1;
+    if (loaded2) this.photo2 = loaded2;
+
+    this.render();
+    this.syncToUnlockedCanvas();
+  }
+
   loadComposite(dataUrl, callback) {
     if (!dataUrl) return;
     const img = new Image();
