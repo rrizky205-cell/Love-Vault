@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnFillSample.addEventListener('click', () => {
     audio.playPop();
     inputUserName.value = 'Rizky';
-    inputPartnerName.value = 'Aura';
+    inputPartnerName.value = 'Mimoi';
     updateCoupleDisplay();
 
     // Fill PIN 140225 (14 Feb 2025)
@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
       polaroid.updatePolaroidDOMCaption();
     }
 
-    const sampleLetter = `Untuk Aura tersayang,\n\nSejak tanggal 14 Februari 2025 itu, hidupku jadi seribu kali lebih indah. Terima kasih sudah selalu menjadi alasan di balik senyumku setiap hari.\n\nBrankas ini aku buat khusus untuk menyimpan kenangan manis kita. Semoga cinta kita selalu hangat dan abadi selamanya! 💕\n\nDari Pangeranmu,\nRizky`;
+    const sampleLetter = `Untuk Mimoi tersayang,\n\nSejak tanggal 14 Februari 2025 itu, hidupku jadi seribu kali lebih indah. Terima kasih sudah selalu menjadi alasan di balik senyumku setiap hari.\n\nBrankas ini aku buat khusus untuk menyimpan kenangan manis kita. Semoga cinta kita selalu hangat dan abadi selamanya! 💕\n\nDari Pangeranmu,\nRizky`;
     inputSecretLetter.value = sampleLetter;
     state.secretLetter = sampleLetter;
     if (letterCharCount) letterCharCount.textContent = `${sampleLetter.length} karakter`;
@@ -863,6 +863,12 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('animate-shake');
       setTimeout(() => {
         card.classList.remove('animate-shake');
+      }, 550);
+    }
+    if (heartPadlockEl) {
+      heartPadlockEl.classList.add('animate-shake');
+      setTimeout(() => {
+        heartPadlockEl.classList.remove('animate-shake');
       }, 550);
     }
   }

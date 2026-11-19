@@ -34,7 +34,12 @@
   <!-- YouTube IFrame Player API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+  <!-- Favicon & Touch Icons -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/logo-lovevault.png">
+  <meta property="og:image" content="assets/logo-lovevault.png">
+  <meta property="og:title" content="LoveVault - Brankas Tanggal Jadian 💖">
+  <meta property="og:description" content="Brankas cinta interaktif untuk mengunci kenangan terindah dan surat rahasia di balik PIN tanggal jadian.">
 </head>
 <body class="bg-[#FFF8F0] min-h-screen relative text-[#4A3038] selection:bg-[#FFB3C6] selection:text-[#C9184A]">
 
@@ -109,8 +114,8 @@
       
       <!-- Logo & Romantic Brand Title -->
       <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FB6F92] to-[#FF8FAB] flex items-center justify-center text-white shadow-md shadow-pink-300 group-hover:scale-105 transition-transform">
-          <span class="text-xl animate-heartbeat">🔒</span>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/95 border border-pink-200/80 p-1 flex items-center justify-center shadow-md shadow-pink-200/70 group-hover:scale-105 transition-transform">
+          <img src="assets/logo-lovevault.png" alt="LoveVault Logo" class="w-full h-full object-contain animate-heartbeat drop-shadow-sm">
         </div>
         <div>
           <h1 class="text-xl sm:text-2xl font-bold font-quicksand bg-gradient-to-r from-[#FB6F92] to-[#C9184A] bg-clip-text text-transparent">
@@ -119,16 +124,6 @@
           <p class="text-[11px] sm:text-xs font-handwriting text-pink-600 font-semibold tracking-wide">
             Brankas Tanggal Jadian Abadi ✨
           </p>
-        </div>
-      </div>
-
-      <!-- Live Couple Pill Badge -->
-      <div class="hidden sm:flex items-center bg-white/80 border border-[#FFB3C6] px-4 py-1.5 rounded-full shadow-sm text-xs font-semibold">
-        <span class="text-gray-500 mr-2">Sepasang:</span>
-        <div id="liveCoupleBadge" class="flex items-center gap-1.5">
-          <span class="text-pink-600 font-bold">Kamu</span>
-          <span class="animate-heartbeat inline-block text-rose-500">❤️</span>
-          <span class="text-pink-600 font-bold">Dia</span>
         </div>
       </div>
 
@@ -201,7 +196,7 @@
                 <input 
                   type="text" 
                   id="inputUserName" 
-                  placeholder="Contoh: Romeo / Rizky" 
+                  placeholder="Contoh: Rizky" 
                   class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-semibold transition-all outline-none"
                 >
               </div>
@@ -212,7 +207,7 @@
                 <input 
                   type="text" 
                   id="inputPartnerName" 
-                  placeholder="Contoh: Juliet / Aura" 
+                  placeholder="Contoh: Mimoi" 
                   class="w-full px-4 py-2.5 rounded-xl border-2 border-pink-100 focus:border-[#FB6F92] focus:ring-2 focus:ring-pink-200 bg-white/90 text-sm font-semibold transition-all outline-none"
                 >
               </div>
@@ -458,7 +453,7 @@
                     📸
                   </div>
                   <span class="text-sm font-bold text-pink-700">Pilih Foto atau Seret ke Sini</span>
-                  <span class="text-[11px] text-gray-500 mt-0.5">JPG, PNG, WEBP (Diproses 100% di browser)</span>
+                  <span class="text-[11px] text-gray-500 mt-0.5">JPG, PNG, atau WEBP</span>
                 </label>
               </div>
             </div>
@@ -711,12 +706,6 @@
 
           </div>
 
-          <!-- Sweet Guarantee Badge -->
-          <div class="glass-card-subtle p-4 text-center text-xs text-gray-600 flex items-center justify-center gap-2">
-            <span>🛡️</span>
-            <span>Semua data foto dan pesan tersimpan aman di browser tanpa server/database.</span>
-          </div>
-
         </div>
 
       </div>
@@ -745,19 +734,22 @@
         </div>
         
         <!-- Bouncy Heart Padlock -->
-        <div class="my-3 flex justify-center">
-          <div id="heartPadlockEl" class="heart-padlock-container bouncing" title="Gembok Cinta Abadi 💕">
-            <div class="padlock-shackle"></div>
-            <div class="padlock-body">
-              <div class="padlock-keyhole"></div>
+        <div class="my-3 sm:my-4 flex justify-center">
+          <div id="heartPadlockEl" class="heart-padlock-container bouncing select-none" title="Gembok Cinta Abadi 💕">
+            <div class="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center">
+              <img 
+                src="assets/logo-lovevault.png" 
+                alt="Gembok Cinta 3D LoveVault" 
+                class="w-full h-full object-contain padlock-img drop-shadow-[0_12px_24px_rgba(251,111,146,0.35)] transition-all duration-300"
+              >
             </div>
           </div>
         </div>
 
         <!-- Personal Greeting for Partner -->
         <h2 class="text-xl sm:text-2xl font-extrabold text-[#4A1525] font-quicksand leading-snug">
-          Halo <span id="vaultPartnerGreeting" class="shimmer-text">Juliet</span>, <br class="sm:hidden">
-          ada rahasia terkunci dari <span id="vaultUserGreeting" class="text-pink-600 font-bold">Romeo</span> nih! 💌
+          Halo <span id="vaultPartnerGreeting" class="shimmer-text">Mimoi</span>, <br class="sm:hidden">
+          ada rahasia terkunci dari <span id="vaultUserGreeting" class="text-pink-600 font-bold">Rizky</span> nih! 💌
         </h2>
         
         <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
@@ -887,7 +879,7 @@
             Selamat Datang di Ruang Cinta Abadi
           </h2>
           <p id="unlockedCoupleNames" class="shimmer-text font-bold text-lg sm:text-xl mt-1">
-            Rizky ❤️ Aura
+            Rizky ❤️ Mimoi
           </p>
         </div>
 
