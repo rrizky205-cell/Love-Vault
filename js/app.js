@@ -70,8 +70,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnMode2Photo = document.getElementById('btnMode2Photo');
   const mode1TemplateSection = document.getElementById('mode1TemplateSection');
   const mode2TemplateSection = document.getElementById('mode2TemplateSection');
+
+  // Mode 1: 5 Templates (1a, 1b, 1c, 1d, 1e)
   const cardTemplate1A = document.getElementById('cardTemplate1A');
   const cardTemplate1B = document.getElementById('cardTemplate1B');
+  const cardTemplate1C = document.getElementById('cardTemplate1C');
+  const cardTemplate1D = document.getElementById('cardTemplate1D');
+  const cardTemplate1E = document.getElementById('cardTemplate1E');
+
+  // Mode 2: 4 Templates (2a, 2b, 2c, 2d)
+  const cardTemplate2A = document.getElementById('cardTemplate2A');
+  const cardTemplate2B = document.getElementById('cardTemplate2B');
+  const cardTemplate2C = document.getElementById('cardTemplate2C');
+  const cardTemplate2D = document.getElementById('cardTemplate2D');
+
+  const templateCards1 = [
+    { id: '1a', el: cardTemplate1A },
+    { id: '1b', el: cardTemplate1B },
+    { id: '1c', el: cardTemplate1C },
+    { id: '1d', el: cardTemplate1D },
+    { id: '1e', el: cardTemplate1E }
+  ];
+
+  const templateCards2 = [
+    { id: '2a', el: cardTemplate2A },
+    { id: '2b', el: cardTemplate2B },
+    { id: '2c', el: cardTemplate2C },
+    { id: '2d', el: cardTemplate2D }
+  ];
+
   const uploadSlotMode1 = document.getElementById('uploadSlotMode1');
   const uploadSlotMode2 = document.getElementById('uploadSlotMode2');
 
@@ -172,7 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (uploadSlotMode1) uploadSlotMode1.classList.remove('hidden');
       if (uploadSlotMode2) uploadSlotMode2.classList.add('hidden');
 
-      updateTemplateUI(polaroid.selectedTemplate === '1b' ? '1b' : '1a');
+      const validMode1 = ['1a', '1b', '1c', '1d', '1e'];
+      const nextTmpl = validMode1.includes(state.template) ? state.template : '1a';
+      updateTemplateUI(nextTmpl);
     } else {
       if (btnMode2Photo) {
         btnMode2Photo.className = "btn-jelly px-4 py-3 rounded-2xl border-2 border-[#FB6F92] bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-sm flex flex-col items-center justify-center shadow-md transition-all";
@@ -185,8 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (uploadSlotMode1) uploadSlotMode1.classList.add('hidden');
       if (uploadSlotMode2) uploadSlotMode2.classList.remove('hidden');
 
-      state.template = '2a';
-      polaroid.setTemplate('2a');
+      const validMode2 = ['2a', '2b', '2c', '2d'];
+      const nextTmpl = validMode2.includes(state.template) ? state.template : '2a';
+      updateTemplateUI(nextTmpl);
     }
   }
 
@@ -194,21 +224,36 @@ document.addEventListener('DOMContentLoaded', () => {
     state.template = tmplId;
     polaroid.setTemplate(tmplId);
 
-    if (tmplId === '1a') {
-      if (cardTemplate1A) {
-        cardTemplate1A.className = "cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2.5 text-center transition-all shadow-md group relative overflow-hidden";
+    const activeMode1 = "cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2 text-center transition-all shadow-md group relative overflow-hidden";
+    const inactiveMode1 = "cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden";
+
+    // Mode 1 Templates (1a, 1b, 1c, 1d, 1e)
+    templateCards1.forEach(card => {
+      if (!card.el) return;
+      if (card.id === tmplId) {
+        card.el.className = activeMode1;
+        const heading = card.el.querySelector('.text-xs');
+        if (heading) heading.className = 'text-xs font-bold text-pink-800 block';
+      } else {
+        card.el.className = inactiveMode1;
+        const heading = card.el.querySelector('.text-xs');
+        if (heading) heading.className = 'text-xs font-bold text-gray-700 block';
       }
-      if (cardTemplate1B) {
-        cardTemplate1B.className = "cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2.5 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden";
+    });
+
+    // Mode 2 Templates (2a, 2b, 2c, 2d)
+    templateCards2.forEach(card => {
+      if (!card.el) return;
+      if (card.id === tmplId) {
+        card.el.className = activeMode1;
+        const heading = card.el.querySelector('.text-xs');
+        if (heading) heading.className = 'text-xs font-bold text-pink-800 block';
+      } else {
+        card.el.className = inactiveMode1;
+        const heading = card.el.querySelector('.text-xs');
+        if (heading) heading.className = 'text-xs font-bold text-gray-700 block';
       }
-    } else if (tmplId === '1b') {
-      if (cardTemplate1B) {
-        cardTemplate1B.className = "cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2.5 text-center transition-all shadow-md group relative overflow-hidden";
-      }
-      if (cardTemplate1A) {
-        cardTemplate1A.className = "cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2.5 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden";
-      }
-    }
+    });
   }
 
   if (btnMode1Photo) {
@@ -225,19 +270,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (cardTemplate1A) {
-    cardTemplate1A.addEventListener('click', () => {
-      audio.playPop();
-      updateTemplateUI('1a');
-    });
-  }
+  // Register click events for all 9 template cards
+  templateCards1.forEach(card => {
+    if (card.el) {
+      card.el.addEventListener('click', () => {
+        audio.playPop();
+        updateTemplateUI(card.id);
+      });
+    }
+  });
 
-  if (cardTemplate1B) {
-    cardTemplate1B.addEventListener('click', () => {
-      audio.playPop();
-      updateTemplateUI('1b');
-    });
-  }
+  templateCards2.forEach(card => {
+    if (card.el) {
+      card.el.addEventListener('click', () => {
+        audio.playPop();
+        updateTemplateUI(card.id);
+      });
+    }
+  });
 
   // File Upload Handlers & Drag-and-Drop
   function bindDropZone(zone, input, slot) {
@@ -1039,15 +1089,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Download Instagram Story Card (1080x1920 PNG)
+  // Download / Share Instagram Story Card (1080x1920 HD)
   if (btnDownloadStory) {
     btnDownloadStory.addEventListener('click', async () => {
       audio.playPop();
       btnDownloadStory.disabled = true;
-      btnDownloadStory.innerHTML = '<span>⏳</span><span>Menyiapkan Story...</span>';
+      btnDownloadStory.innerHTML = '<span>⏳</span><span>Memproses Story HD...</span>';
 
       try {
-        await storyGenerator.downloadStoryCard({
+        const result = await storyGenerator.shareOrDownloadStoryCard({
           userName: state.userName || 'Kamu',
           partnerName: state.partnerName || 'Dia',
           pin: state.pin || '140225',
@@ -1057,9 +1107,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         atmosphere.triggerRomanticConfetti();
-        showToast('📸 Kartu IG Story (1080x1920) berhasil diunduh! Siap upload ke Story 💕');
+        if (result && result.shared) {
+          showToast('💖 Berhasil membuka menu Bagikan ke Instagram Story!');
+        } else if (result && result.cancelled) {
+          showToast('ℹ️ Pembagian Story dibatalkan.');
+        } else {
+          showToast('📸 Gambar Story HD (1080x1920) berhasil diunduh! Siap upload ke Instagram Story 💕');
+        }
       } catch (err) {
-        console.error('Download error:', err);
+        console.error('Story share error:', err);
         showToast('⚠️ Gagal membuat gambar Story, coba lagi ya!');
       } finally {
         btnDownloadStory.disabled = false;
@@ -1087,73 +1143,145 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============================================================
-     9. Ultra-Reliable Share Link Engine (LZ-String & Adaptive Compression)
+     9. Short Share Link Engine (Cloud JSON API with HD Photos & Short IDs)
      ============================================================ */
-  function generateShareLinkData() {
-    let maxDim1 = state.mode === '2' ? 180 : 240;
-    let quality1 = state.mode === '2' ? 0.45 : 0.55;
-    let maxDim2 = 180;
-    let quality2 = 0.45;
+  async function generateShareLinkData() {
+    // Obtain HD quality photos for crisp rendering on partner's device
+    const photosHD = polaroid.getShareablePhotosHD 
+      ? polaroid.getShareablePhotosHD() 
+      : polaroid.getShareablePhotos(1080, 0.90, 1080, 0.90);
 
-    let finalEncoded = '';
-    let iterations = 0;
+    const isYt = Boolean(extractYouTubeID(state.customMusicUrl));
+    const payload = {
+      n1: state.userName,
+      n2: state.partnerName,
+      p: state.pin,
+      h: state.hint,
+      s: state.secretLetter,
+      c: polaroid.captionText,
+      m: state.mode || polaroid.mode,
+      t: state.template || polaroid.selectedTemplate,
+      f: polaroid.currentFilter,
+      a: state.customMusicUrl,
+      at: isYt ? 'yt' : (state.musicMood === 'custom' ? 'mp3' : state.musicMood),
+      i1: photosHD.i1 || '',
+      i2: photosHD.i2 || '',
+      createdAt: new Date().toISOString()
+    };
 
-    // Adaptive loop: guarantee total URL length < 5500 chars for WhatsApp safety
-    while (iterations < 4) {
-      const photos = polaroid.getShareablePhotos(maxDim1, quality1, maxDim2, quality2);
+    let vaultId = null;
 
-      const isYt = Boolean(extractYouTubeID(state.customMusicUrl));
-      const payload = {
-        n1: state.userName,
-        n2: state.partnerName,
-        p: state.pin,
-        h: state.hint,
-        s: state.secretLetter,
-        c: polaroid.captionText,
-        m: state.mode || polaroid.mode,
-        t: state.template || polaroid.selectedTemplate,
-        f: polaroid.currentFilter,
-        a: state.customMusicUrl,
-        at: isYt ? 'yt' : (state.musicMood === 'custom' ? 'mp3' : state.musicMood),
-        i1: photos.i1 || '',
-        i2: photos.i2 || ''
+    // Strategy 1: Vercel Serverless Function Proxy (/api/save)
+    try {
+      const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.id) {
+          vaultId = data.id;
+        }
+      }
+    } catch (err) {
+      console.warn('API /api/save unavailable, trying direct storage...', err);
+    }
+
+    // Strategy 2: Direct jsonblob.com API (Free JSON store with CORS support)
+    if (!vaultId) {
+      try {
+        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        if (res.status === 201 || res.ok) {
+          const loc = res.headers.get('Location') || res.headers.get('x-jsonblob-id');
+          if (loc) {
+            const parts = loc.split('/');
+            vaultId = parts[parts.length - 1];
+          } else {
+            const data = await res.json().catch(() => null);
+            if (data && data.id) vaultId = data.id;
+          }
+        }
+      } catch (err) {
+        console.warn('Direct jsonblob API error, falling back to local hash...', err);
+      }
+    }
+
+    // Strategy 3: Success with short clean URL
+    if (vaultId) {
+      const shareUrl = `${window.location.origin}${window.location.pathname}?id=${vaultId}`;
+      return {
+        shareUrl,
+        charCount: shareUrl.length,
+        isShortLink: true,
+        id: vaultId
       };
+    }
 
-      const jsonStr = JSON.stringify(payload);
-      if (typeof LZString !== 'undefined' && LZString.compressToEncodedURIComponent) {
-        finalEncoded = LZString.compressToEncodedURIComponent(jsonStr);
-      } else {
-        finalEncoded = btoa(encodeURIComponent(jsonStr));
-      }
-
-      if (finalEncoded.length <= 5500 || iterations === 3) {
-        break;
-      }
-
-      iterations++;
-      maxDim1 = Math.round(maxDim1 * 0.75);
-      quality1 = Math.max(0.25, quality1 * 0.75);
-      maxDim2 = Math.round(maxDim2 * 0.75);
-      quality2 = Math.max(0.25, quality2 * 0.75);
+    // Strategy 4 (Offline Fallback): Compressed URL Hash via LZ-String
+    let finalEncoded = '';
+    const photosCompact = polaroid.getShareablePhotos(240, 0.55, 180, 0.45);
+    const compactPayload = {
+      ...payload,
+      i1: photosCompact.i1 || '',
+      i2: photosCompact.i2 || ''
+    };
+    const jsonStr = JSON.stringify(compactPayload);
+    if (typeof LZString !== 'undefined' && LZString.compressToEncodedURIComponent) {
+      finalEncoded = LZString.compressToEncodedURIComponent(jsonStr);
+    } else {
+      finalEncoded = btoa(encodeURIComponent(jsonStr));
     }
 
     const shareUrl = `${window.location.origin}${window.location.pathname}#v=${finalEncoded}`;
-    window.location.hash = `v=${finalEncoded}`;
-    return { shareUrl, charCount: shareUrl.length };
+    return {
+      shareUrl,
+      charCount: shareUrl.length,
+      isShortLink: false
+    };
   }
 
-  function openShareModal() {
+  async function openShareModal() {
     audio.playPop();
-    const data = generateShareLinkData();
+
     if (shareModalUrlInput) {
-      shareModalUrlInput.value = data.shareUrl;
+      shareModalUrlInput.value = '⏳ Menyimpan ke Cloud & membuat link pendek HD...';
     }
     if (shareUrlCharCount) {
-      shareUrlCharCount.textContent = `${data.charCount} karakter (Sangat Aman untuk WhatsApp)`;
+      shareUrlCharCount.textContent = 'Menghubungkan ke Cloud Storage...';
+      shareUrlCharCount.className = "text-[11px] text-pink-600 font-medium";
     }
     if (shareModal) {
       shareModal.classList.remove('hidden');
       shareModal.classList.add('flex');
+    }
+
+    try {
+      const data = await generateShareLinkData();
+      if (shareModalUrlInput) {
+        shareModalUrlInput.value = data.shareUrl;
+      }
+      if (shareUrlCharCount) {
+        if (data.isShortLink) {
+          shareUrlCharCount.textContent = `✨ ${data.charCount} karakter (Link Pendek Resmi, Foto Kualitas HD Anti-Burik!)`;
+          shareUrlCharCount.className = "text-[11px] text-green-700 font-bold bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200";
+        } else {
+          shareUrlCharCount.textContent = `${data.charCount} karakter (Mode Kompresi Darurat)`;
+          shareUrlCharCount.className = "text-[11px] text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200";
+        }
+      }
+      showToast('🔗 Link Brankas HD siap dibagikan ke pasangan!');
+    } catch (err) {
+      console.error('Error generating link:', err);
+      if (shareModalUrlInput) shareModalUrlInput.value = window.location.href;
+      showToast('⚠️ Gagal membuat link pendek, silakan coba lagi!');
     }
   }
 
@@ -1251,54 +1379,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnShareVaultFloating) btnShareVaultFloating.addEventListener('click', openShareModal);
 
   /* ============================================================
-     10. Routing & Reliable URL Reading on Initial Page Load
+     10. Routing & Reliable URL Reading (?id=... & #v=...)
      ============================================================ */
-  function loadFromUrlHash() {
-    let rawData = '';
-    let isLZ = false;
 
-    const hash = window.location.hash;
-    const search = window.location.search;
-
-    if (hash.startsWith('#v=')) {
-      rawData = hash.substring(3);
-      isLZ = true;
-    } else if (hash.startsWith('#vault=')) {
-      rawData = hash.substring(7);
-      isLZ = false;
-    } else if (search.includes('v=')) {
-      const params = new URLSearchParams(search);
-      rawData = params.get('v') || '';
-      isLZ = true;
-    }
-
-    if (!rawData) return false;
-
-    let payload = null;
-
-    // Attempt 1: Decompress with LZString
-    if (typeof LZString !== 'undefined' && LZString.decompressFromEncodedURIComponent) {
-      try {
-        const decompressed = LZString.decompressFromEncodedURIComponent(rawData);
-        if (decompressed) {
-          payload = JSON.parse(decompressed);
-        }
-      } catch (e) {
-        // try fallback
-      }
-    }
-
-    // Attempt 2: Legacy atob / decodeURIComponent
-    if (!payload) {
-      try {
-        const decoded = decodeURIComponent(atob(rawData));
-        payload = JSON.parse(decoded);
-      } catch (e) {
-        // failed
-      }
-    }
-
-    // Verify minimum essential payload
+  // Applies payload to application state & views
+  function applyVaultPayload(payload) {
     const hasPin = payload && (payload.p || payload.pin);
     const hasName = payload && (payload.n1 || payload.u);
 
@@ -1308,7 +1393,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Normalize payload (supports both new short keys and legacy keys)
       state.userName = payload.n1 || payload.u || 'Kamu';
       state.partnerName = payload.n2 || payload.p || 'Dia';
       state.pin = String(payload.p || payload.pin || '');
@@ -1333,19 +1417,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Populate Input fields so everything stays synchronized
-      inputUserName.value = state.userName;
-      inputPartnerName.value = state.partnerName;
+      if (inputUserName) inputUserName.value = state.userName;
+      if (inputPartnerName) inputPartnerName.value = state.partnerName;
       updateCoupleDisplay();
 
       state.pin.split('').forEach((d, i) => {
         if (pinDigits[i]) pinDigits[i].value = d;
       });
 
-      inputHint.value = state.hint;
-      inputSecretLetter.value = state.secretLetter;
-      inputCustomMusic.value = state.customMusicUrl;
-      selectMusicMood.value = state.musicMood === 'custom' ? 'custom' : state.musicMood;
-      if (state.musicMood === 'custom') {
+      if (inputHint) inputHint.value = state.hint;
+      if (inputSecretLetter) inputSecretLetter.value = state.secretLetter;
+      if (inputCustomMusic) inputCustomMusic.value = state.customMusicUrl;
+      if (selectMusicMood) selectMusicMood.value = state.musicMood === 'custom' ? 'custom' : state.musicMood;
+      if (state.musicMood === 'custom' && customMusicContainer) {
         customMusicContainer.classList.remove('hidden');
       }
 
@@ -1353,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateModeUI(state.mode);
       updateTemplateUI(state.template);
 
-      // Load Photos
+      // Load Photos HD
       if (payload.i1 || payload.i2) {
         polaroid.loadPhotosFromShare(payload.i1, payload.i2, state.mode, state.template);
       } else if (payload.img) {
@@ -1378,6 +1462,108 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Load Vault using Short ID from Cloud Storage
+  async function loadVaultFromId(vaultId) {
+    const loadingOverlay = document.getElementById('vaultLoadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+    let payload = null;
+
+    // 1. Try Vercel Serverless Function Proxy
+    try {
+      const res = await fetch(`/api/load?id=${encodeURIComponent(vaultId)}`);
+      if (res.ok) {
+        payload = await res.json();
+      }
+    } catch (err) {
+      console.warn('Failed loading from /api/load:', err);
+    }
+
+    // 2. Direct jsonblob.com fallback
+    if (!payload) {
+      try {
+        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${encodeURIComponent(vaultId)}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          payload = await res.json();
+        }
+      } catch (err) {
+        console.warn('Failed loading from jsonblob direct:', err);
+      }
+    }
+
+    if (!payload) {
+      if (loadingOverlay) loadingOverlay.classList.add('hidden');
+      showBrokenLinkModal();
+      return false;
+    }
+
+    const ok = applyVaultPayload(payload);
+    if (loadingOverlay) {
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+      }, 350);
+    }
+    return ok;
+  }
+
+  // Fallback: Load Vault using URL Hash (LZ-String or Base64)
+  function loadFromUrlHash() {
+    let rawData = '';
+
+    const hash = window.location.hash;
+    const search = window.location.search;
+
+    if (hash.startsWith('#v=')) {
+      rawData = hash.substring(3);
+    } else if (hash.startsWith('#vault=')) {
+      rawData = hash.substring(7);
+    } else if (search.includes('v=')) {
+      const params = new URLSearchParams(search);
+      rawData = params.get('v') || '';
+    }
+
+    if (!rawData) return false;
+
+    let payload = null;
+
+    // Attempt 1: Decompress with LZString
+    if (typeof LZString !== 'undefined' && LZString.decompressFromEncodedURIComponent) {
+      try {
+        const decompressed = LZString.decompressFromEncodedURIComponent(rawData);
+        if (decompressed) {
+          payload = JSON.parse(decompressed);
+        }
+      } catch (e) {}
+    }
+
+    // Attempt 2: Legacy atob / decodeURIComponent
+    if (!payload) {
+      try {
+        const decoded = decodeURIComponent(atob(rawData));
+        payload = JSON.parse(decoded);
+      } catch (e) {}
+    }
+
+    return applyVaultPayload(payload);
+  }
+
+  // Master Initial Route Checker
+  async function checkInitialRoute() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const idParam = searchParams.get('id');
+
+    if (idParam) {
+      const loaded = await loadVaultFromId(idParam);
+      if (loaded) return;
+    }
+
+    if (window.location.hash) {
+      loadFromUrlHash();
+    }
+  }
+
   function showBrokenLinkModal() {
     if (brokenLinkModal) {
       brokenLinkModal.classList.remove('hidden');
@@ -1392,15 +1578,19 @@ document.addEventListener('DOMContentLoaded', () => {
         brokenLinkModal.classList.add('hidden');
         brokenLinkModal.classList.remove('flex');
       }
+      window.location.search = '';
       window.location.hash = '';
       switchToCreatorMode();
       showToast('✨ Silakan buat Brankas Cinta baru untuk pasanganmu!');
     });
   }
 
-  // Listen to hash changes (e.g. user pastes new link without reloading)
+  // Listen to hash and popstate changes
   window.addEventListener('hashchange', () => {
-    loadFromUrlHash();
+    checkInitialRoute();
+  });
+  window.addEventListener('popstate', () => {
+    checkInitialRoute();
   });
 
   /* ============================================================
@@ -1432,6 +1622,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateModeUI('1');
   updateTemplateUI('1a');
 
-  // Check URL Hash on launch
-  loadFromUrlHash();
+  // Check URL on launch (?id=... or #v=...)
+  checkInitialRoute();
 });

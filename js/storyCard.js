@@ -1,8 +1,13 @@
 /**
- * LoveVault - Instagram Story Card Generator (Tahap 3)
+ * LoveVault - Instagram Story Card Generator (HD 1080x1920)
  * Renders a high-resolution vertical 9:16 (1080 x 1920 px) Instagram Story Card
  * with Polaroid photograph, handwritten caption, celebratory badge, couple names,
- * and love letter excerpt, ready for instant download as a PNG file.
+ * love letter excerpt, and watermark "LoveVault ❤️".
+ * 
+ * Features:
+ * - Native Web Share API (navigator.share) for direct IG Story sharing on mobile
+ * - Automatic direct download fallback on desktop / unsupported browsers
+ * - Zero canvas tainting guarantee
  */
 
 class StoryCardGenerator {
@@ -15,10 +20,14 @@ class StoryCardGenerator {
     this.ctx = this.canvas.getContext('2d');
   }
 
-  /**
-   * Generates and downloads the 1080x1920 IG Story Card
-   */
   async downloadStoryCard(data) {
+    return this.shareOrDownloadStoryCard(data);
+  }
+
+  /**
+   * Generates and Shares / Downloads the 1080x1920 IG Story Card
+   */
+  async shareOrDownloadStoryCard(data) {
     const {
       userName = 'Kamu',
       partnerName = 'Dia',
@@ -28,7 +37,6 @@ class StoryCardGenerator {
       photoCanvas = null
     } = data;
 
-    // Ensure custom fonts are loaded
     if (document.fonts) {
       await document.fonts.ready;
     }
@@ -38,10 +46,12 @@ class StoryCardGenerator {
     const h = this.height;
 
     ctx.clearRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     // 1. Romantic Background Gradient
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#FFFDF9');   // Soft warm cream
+    bgGrad.addColorStop(0, '#FFFDF9');   // Warm cream
     bgGrad.addColorStop(0.35, '#FFE5EC'); // Blush pink
     bgGrad.addColorStop(0.72, '#FFB3C6'); // Rose pink
     bgGrad.addColorStop(1, '#FB6F92');    // Deep rose
@@ -49,7 +59,7 @@ class StoryCardGenerator {
     ctx.fillRect(0, 0, w, h);
 
     // 2. Decorative Outer Border Frame
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
     ctx.lineWidth = 4;
     this.drawRoundedRect(ctx, 40, 40, w - 80, h - 80, 40);
     ctx.stroke();
@@ -59,7 +69,7 @@ class StoryCardGenerator {
     this.drawRoundedRect(ctx, 52, 52, w - 104, h - 104, 32);
     ctx.stroke();
 
-    // 3. Ambient Floating Hearts & Sakura Petals in Background
+    // 3. Ambient Floating Hearts & Sparkles in Background
     this.drawBackgroundAtmosphere(ctx, w, h);
 
     // 4. Header Badge: "✨ LOVEVAULT • BUKTI CINTA ABADI ✨"
@@ -132,52 +142,56 @@ class StoryCardGenerator {
     ctx.setLineDash([6, 4]);
     this.drawRoundedRect(ctx, w / 2 - 105, polaroidY - 18, 210, 36, 6);
     ctx.stroke();
-    ctx.setLineDash([]); // reset dash
+    ctx.setLineDash([]);
 
-    // Photo Area (Adaptive to 1:1 or 4:5 Templates)
+    // Photo Area inside Polaroid
     const maxPhotoW = 680;
     const maxPhotoH = 720;
     const photoCenterX = polaroidX + polaroidW / 2;
     const photoCenterY = polaroidY + 40 + maxPhotoH / 2;
 
     if (photoCanvas) {
-      const srcW = photoCanvas.width || 600;
-      const srcH = photoCanvas.height || 600;
+      const srcW = photoCanvas.width || 800;
+      const srcH = photoCanvas.height || 800;
       const aspect = srcW / srcH;
       let drawW, drawH;
 
-      if (aspect >= 1) {
+      if (aspect >= (maxPhotoW / maxPhotoH)) {
         drawW = maxPhotoW;
         drawH = maxPhotoW / aspect;
       } else {
         drawH = maxPhotoH;
-        drawW = Math.min(maxPhotoW, maxPhotoH * aspect);
+        drawW = maxPhotoH * aspect;
       }
       const drawX = photoCenterX - drawW / 2;
       const drawY = photoCenterY - drawH / 2;
+
+      ctx.save();
+      this.drawRoundedClip(ctx, drawX, drawY, drawW, drawH, 8);
       ctx.drawImage(photoCanvas, drawX, drawY, drawW, drawH);
+      ctx.restore();
+
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.lineWidth = 2;
+      this.drawRoundedRect(ctx, drawX, drawY, drawW, drawH, 8);
+      ctx.stroke();
     } else {
       ctx.fillStyle = '#FFE5EC';
       ctx.fillRect(photoCenterX - 340, photoCenterY - 340, 680, 680);
     }
 
-    // Photo Border Inner Shadow
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(photoX, photoY, photoSize, photoSize);
-
     // Handwritten Caption below Photo
     ctx.fillStyle = '#800F2F';
-    ctx.font = '600 50px "Caveat", cursive';
+    ctx.font = '600 48px "Caveat", cursive';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(caption || 'Hari terindah bersama kamu ❤️', w / 2, polaroidY + photoSize + 115);
+    ctx.fillText(caption || 'Hari terindah bersama kamu ❤️', w / 2, polaroidY + maxPhotoH + 75);
 
-    // 8. Secret Letter Excerpt on Parchment Paper Box
+    // 8. Secret Letter Excerpt Box
     const letterBoxW = 860;
-    const letterBoxH = 260;
+    const letterBoxH = 250;
     const letterBoxX = (w - letterBoxW) / 2;
-    const letterBoxY = 1425;
+    const letterBoxY = 1430;
 
     ctx.shadowColor = 'rgba(100, 30, 50, 0.15)';
     ctx.shadowBlur = 25;
@@ -192,7 +206,7 @@ class StoryCardGenerator {
     this.drawRoundedRect(ctx, letterBoxX, letterBoxY, letterBoxW, letterBoxH, 24);
     ctx.stroke();
 
-    // Left Rose Ribbon Accent on Parchment
+    // Rose Ribbon Accent
     ctx.fillStyle = '#FB6F92';
     this.drawRoundedRect(ctx, letterBoxX, letterBoxY + 16, 8, letterBoxH - 32, 4);
     ctx.fill();
@@ -223,12 +237,62 @@ class StoryCardGenerator {
     ctx.fillText(`🔐 Tanggal Jadian Abadi: ${formattedPin}`, w / 2, 1735);
 
     // 10. Watermark & Footer
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = '600 22px "Quicksand", sans-serif';
-    ctx.fillText('lovevault.app • Diabadikan dengan Cinta Abadi 💕', w / 2, 1830);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.font = '700 24px "Quicksand", sans-serif';
+    ctx.fillText('LoveVault ❤️ • Diabadikan Bersama Selamanya', w / 2, 1830);
 
-    // Trigger PNG Download
-    this.triggerDownload(userName, partnerName);
+    // 11. Handle Web Share API (Mobile) or File Download (Desktop)
+    return await this.exportAndShareOrDownload(userName, partnerName);
+  }
+
+  async exportAndShareOrDownload(userName, partnerName) {
+    const cleanU = userName.replace(/[^a-zA-Z0-9]/g, '');
+    const cleanP = partnerName.replace(/[^a-zA-Z0-9]/g, '');
+    const filename = `LoveVault-${cleanU}-${cleanP}-Story.png`;
+
+    const blob = await new Promise((resolve) => {
+      this.canvas.toBlob(resolve, 'image/png');
+    });
+
+    if (!blob) {
+      throw new Error('Canvas export failed');
+    }
+
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    // Try Web Share API (native share sheet on Android / iOS)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'LoveVault Kenangan Kita',
+          text: `Brankas cinta ${userName} ❤️ ${partnerName} #LoveVault`
+        });
+        return { shared: true };
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          return { cancelled: true };
+        }
+        // Fallback to file download
+        this.downloadBlobFile(blob, filename);
+        return { downloaded: true };
+      }
+    } else {
+      // Desktop / Web share unsupported fallback
+      this.downloadBlobFile(blob, filename);
+      return { downloaded: true };
+    }
+  }
+
+  downloadBlobFile(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.download = filename;
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
   drawRoundedRect(ctx, x, y, width, height, radius) {
@@ -245,35 +309,24 @@ class StoryCardGenerator {
     ctx.closePath();
   }
 
-  drawBackgroundAtmosphere(ctx, w, h) {
-    // Floating Hearts
-    const hearts = [
-      [110, 260, 28, '#FB6F92', 0.35],
-      [970, 300, 34, '#FF8FAB', 0.40],
-      [90, 780, 24, '#FFCCD5', 0.45],
-      [990, 840, 30, '#FB6F92', 0.38],
-      [120, 1360, 32, '#FF8FAB', 0.35],
-      [960, 1390, 28, '#FFCCD5', 0.42],
-      [220, 1780, 36, '#ffffff', 0.45],
-      [860, 1780, 36, '#ffffff', 0.45]
-    ];
+  drawRoundedClip(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    this.drawRoundedRect(ctx, x, y, width, height, radius);
+    ctx.clip();
+  }
 
-    hearts.forEach(([x, y, size, color, alpha]) => {
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      const d = size;
-      ctx.translate(x, y);
-      ctx.moveTo(0, d * 0.3);
-      ctx.bezierCurveTo(-d * 0.55, -d * 0.45, -d * 0.95, d * 0.3, 0, d * 0.95);
-      ctx.bezierCurveTo(d * 0.95, d * 0.3, d * 0.55, -d * 0.45, 0, d * 0.3);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+  drawBackgroundAtmosphere(ctx, w, h) {
+    const hearts = [
+      [120, 220, 28], [940, 260, 32], [80, 680, 24], [1000, 720, 30],
+      [140, 1200, 36], [920, 1340, 28], [240, 1750, 26], [840, 1720, 32]
+    ];
+    hearts.forEach(([x, y, size]) => {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.font = `${size}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('💖', x, y);
     });
 
-    // Golden Sparkles
     const sparkles = [
       [200, 200, 8], [880, 210, 10], [90, 520, 7], [990, 600, 9],
       [110, 1100, 8], [970, 1150, 8], [180, 1680, 9], [900, 1680, 9]
@@ -296,7 +349,6 @@ class StoryCardGenerator {
       const metrics = ctx.measureText(testLine);
       if (metrics.width > maxWidth) {
         if (lines.length === maxLines - 1) {
-          // Truncate last line with ellipsis
           currentLine += '...';
           lines.push(currentLine);
           return lines;
@@ -311,31 +363,6 @@ class StoryCardGenerator {
       lines.push(currentLine);
     }
     return lines;
-  }
-
-  triggerDownload(userName, partnerName) {
-    try {
-      this.canvas.toBlob((blob) => {
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const cleanU = userName.replace(/[^a-zA-Z0-9]/g, '');
-        const cleanP = partnerName.replace(/[^a-zA-Z0-9]/g, '');
-        a.download = `LoveVault-${cleanU}-${cleanP}-Story.png`;
-        a.href = url;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-      }, 'image/png');
-    } catch (e) {
-      console.warn('Canvas blob error:', e);
-      // Fallback
-      const a = document.createElement('a');
-      a.download = `LoveVault-Story.png`;
-      a.href = this.canvas.toDataURL('image/png');
-      a.click();
-    }
   }
 }
 

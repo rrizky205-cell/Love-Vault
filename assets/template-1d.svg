@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="filmGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#232326"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <radialGradient id="lightLeak" cx="95%" cy="8%" r="40%">
+      <stop offset="0%" stop-color="#FF5400" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#FF0054" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Film Base -->
+  <rect width="400" height="500" rx="16" fill="url(#filmGlow)"/>
+
+  <!-- Left Sprocket Holes -->
+  <g fill="#2D2D32">
+    <rect x="12" y="24" width="20" height="26" rx="4"/>
+    <rect x="12" y="68" width="20" height="26" rx="4"/>
+    <rect x="12" y="112" width="20" height="26" rx="4"/>
+    <rect x="12" y="156" width="20" height="26" rx="4"/>
+    <rect x="12" y="200" width="20" height="26" rx="4"/>
+    <rect x="12" y="244" width="20" height="26" rx="4"/>
+    <rect x="12" y="288" width="20" height="26" rx="4"/>
+    <rect x="12" y="332" width="20" height="26" rx="4"/>
+    <rect x="12" y="376" width="20" height="26" rx="4"/>
+    <rect x="12" y="420" width="20" height="26" rx="4"/>
+    <rect x="12" y="456" width="20" height="26" rx="4"/>
+  </g>
+
+  <!-- Right Sprocket Holes -->
+  <g fill="#2D2D32">
+    <rect x="368" y="24" width="20" height="26" rx="4"/>
+    <rect x="368" y="68" width="20" height="26" rx="4"/>
+    <rect x="368" y="112" width="20" height="26" rx="4"/>
+    <rect x="368" y="156" width="20" height="26" rx="4"/>
+    <rect x="368" y="200" width="20" height="26" rx="4"/>
+    <rect x="368" y="244" width="20" height="26" rx="4"/>
+    <rect x="368" y="288" width="20" height="26" rx="4"/>
+    <rect x="368" y="332" width="20" height="26" rx="4"/>
+    <rect x="368" y="376" width="20" height="26" rx="4"/>
+    <rect x="368" y="420" width="20" height="26" rx="4"/>
+    <rect x="368" y="456" width="20" height="26" rx="4"/>
+  </g>
+
+  <!-- Center Photo Frame Area -->
+  <rect x="44" y="50" width="312" height="395" rx="6" fill="#1C1C20" stroke="#333338" stroke-width="1.5"/>
+
+  <!-- Vintage Orange Film Markings -->
+  <!-- Top Markings -->
+  <text x="50" y="35" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#FFA726" letter-spacing="1">
+    KODAK PORTRA 400
+  </text>
+  <text x="245" y="35" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#FFA726">
+    ▶ 24A
+  </text>
+  <text x="310" y="35" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#FFA726">
+    • 25 •
+  </text>
+
+  <!-- Bottom Markings -->
+  <text x="50" y="470" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#FFA726" letter-spacing="1">
+    SAFETY FILM • EXP 36
+  </text>
+  <text x="290" y="470" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#FFA726">
+    LOVE-VAULT
+  </text>
+
+  <!-- Warm Retro Light Leak Accent -->
+  <rect x="44" y="50" width="312" height="395" rx="6" fill="url(#lightLeak)" pointer-events="none"/>
+</svg>

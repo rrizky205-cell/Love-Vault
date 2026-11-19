@@ -38,6 +38,19 @@
 </head>
 <body class="bg-[#FFF8F0] min-h-screen relative text-[#4A3038] selection:bg-[#FFB3C6] selection:text-[#C9184A]">
 
+  <!-- Vault Loading Overlay (When opening short link ?id=...) -->
+  <div id="vaultLoadingOverlay" class="hidden fixed inset-0 z-50 bg-[#FFF8F0]/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-6 transition-all duration-300">
+    <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-3xl animate-bounce mb-3 shadow-md border-2 border-pink-200">
+      💌
+    </div>
+    <h3 class="text-xl font-extrabold text-[#4A1525] font-quicksand">Membuka Brankas Cinta...</h3>
+    <p class="text-xs sm:text-sm text-pink-600 font-semibold mt-1">Mengambil kenangan indah dari pasanganmu 💕</p>
+    <div class="mt-4 flex items-center gap-1.5">
+      <span class="w-2.5 h-2.5 rounded-full bg-rose-400 animate-ping"></span>
+      <span class="text-xs text-gray-500 font-medium">Sedang memuat data HD...</span>
+    </div>
+  </div>
+
   <!-- Canvas Background: Floating Hearts & Sakura Blossoms -->
   <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
@@ -291,7 +304,7 @@
                 >
                   <span class="text-xl mb-0.5">📷</span>
                   <span>Mode 1 Foto</span>
-                  <span class="text-[10px] opacity-90 font-medium">2 Pilihan Template</span>
+                  <span class="text-[10px] opacity-90 font-medium">5 Pilihan Desain HD</span>
                 </button>
 
                 <button 
@@ -301,55 +314,133 @@
                 >
                   <span class="text-xl mb-0.5">📸📸</span>
                   <span>Mode 2 Foto</span>
-                  <span class="text-[10px] opacity-75 font-medium">Template Kolase 2A</span>
+                  <span class="text-[10px] opacity-75 font-medium">4 Pilihan Desain HD</span>
                 </button>
               </div>
             </div>
 
-            <!-- STEP 2A: Template Picker for Mode 1 Foto -->
+            <!-- STEP 2A: Template Picker for Mode 1 Foto (5 Desain) -->
             <div id="mode1TemplateSection" class="mb-5">
-              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <span>🎨</span> 2. Pilih Template Desain:
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span class="flex items-center gap-1.5"><span>🎨</span> 2. Pilih Template Desain (1 Foto):</span>
+                <span class="text-[10px] text-pink-600 font-bold">5 Pilihan Estetik</span>
               </label>
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 <!-- Template 1A -->
                 <div 
                   id="cardTemplate1A" 
-                  class="cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2.5 text-center transition-all shadow-md group relative overflow-hidden"
+                  class="cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2 text-center transition-all shadow-md group relative overflow-hidden"
                 >
-                  <div class="w-full aspect-square rounded-xl overflow-hidden bg-white mb-2 border border-pink-200 flex items-center justify-center">
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-white mb-1.5 border border-pink-200 flex items-center justify-center">
                     <img src="assets/template-1a.png" class="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform" alt="Template 1A">
                   </div>
                   <span class="text-xs font-bold text-pink-800 block">Template 1A</span>
-                  <span class="text-[10px] text-gray-500 block leading-tight">Bingkai Abstrak & Bunga</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Beige &amp; Floral Line</span>
                 </div>
 
                 <!-- Template 1B -->
                 <div 
                   id="cardTemplate1B" 
-                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2.5 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
                 >
-                  <div class="w-full aspect-square rounded-xl overflow-hidden bg-neutral-100 mb-2 border border-pink-100 flex items-center justify-center">
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-neutral-100 mb-1.5 border border-pink-100 flex items-center justify-center">
                     <img src="assets/template-1b.jpg" class="w-full h-full object-contain group-hover:scale-105 transition-transform" alt="Template 1B">
                   </div>
                   <span class="text-xs font-bold text-gray-700 block">Template 1B</span>
-                  <span class="text-[10px] text-gray-500 block leading-tight">Vintage Teddy & Retro Cam</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Vintage Teddy &amp; Cam</span>
+                </div>
+
+                <!-- Template 1C (NEW) -->
+                <div 
+                  id="cardTemplate1C" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-pink-50 mb-1.5 border border-pink-100 flex items-center justify-center">
+                    <img src="assets/template-1c.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 1C">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 1C</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Coquette Pink Ribbon</span>
+                </div>
+
+                <!-- Template 1D (NEW) -->
+                <div 
+                  id="cardTemplate1D" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-neutral-900 mb-1.5 border border-neutral-700 flex items-center justify-center">
+                    <img src="assets/template-1d.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 1D">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 1D</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Classic 35mm Film</span>
+                </div>
+
+                <!-- Template 1E (NEW) -->
+                <div 
+                  id="cardTemplate1E" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden col-span-2 sm:col-span-1"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF5EB] mb-1.5 border border-[#EADBCE] flex items-center justify-center">
+                    <img src="assets/template-1e.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 1E">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 1E</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Floral Scrapbook</span>
                 </div>
               </div>
             </div>
 
-            <!-- STEP 2B: Template Banner for Mode 2 Foto (Automated 2A) -->
+            <!-- STEP 2B: Template Picker for Mode 2 Foto (4 Desain) -->
             <div id="mode2TemplateSection" class="hidden mb-5">
-              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <span>🎨</span> Desain Template Terpilih:
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span class="flex items-center gap-1.5"><span>🎨</span> 2. Pilih Template Desain (2 Foto):</span>
+                <span class="text-[10px] text-pink-600 font-bold">4 Pilihan Estetik</span>
               </label>
-              <div class="border-2 border-rose-400 bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-3 flex items-center gap-3 shadow-sm">
-                <div class="w-14 h-16 rounded-xl overflow-hidden bg-white border border-pink-200 flex-shrink-0">
-                  <img src="assets/template-2a.jpg" class="w-full h-full object-cover" alt="Template 2A">
+              <div class="grid grid-cols-2 gap-2.5">
+                <!-- Template 2A -->
+                <div 
+                  id="cardTemplate2A" 
+                  class="cursor-pointer border-2 border-rose-500 bg-pink-50/80 rounded-2xl p-2 text-center transition-all shadow-md group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-white mb-1.5 border border-pink-200 flex items-center justify-center">
+                    <img src="assets/template-2a.jpg" class="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="Template 2A">
+                  </div>
+                  <span class="text-xs font-bold text-pink-800 block">Template 2A</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Double Cozy Knit</span>
                 </div>
-                <div>
-                  <span class="text-xs font-bold text-pink-900 block">Template 2A: Double Polaroid Cozy Knit</span>
-                  <span class="text-[11px] text-gray-600 block leading-snug">2 Foto Polaroid estetik dengan rajutan krem & pita kotak-kotak cokelat</span>
+
+                <!-- Template 2B (NEW) -->
+                <div 
+                  id="cardTemplate2B" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-pink-50 mb-1.5 border border-pink-100 flex items-center justify-center">
+                    <img src="assets/template-2b.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 2B">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 2B</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Sweet Photobooth Strip</span>
+                </div>
+
+                <!-- Template 2C (NEW) -->
+                <div 
+                  id="cardTemplate2C" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#F5EDE0] mb-1.5 border border-[#E0D0C0] flex items-center justify-center">
+                    <img src="assets/template-2c.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 2C">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 2C</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Pinned Corkboard Duo</span>
+                </div>
+
+                <!-- Template 2D (NEW) -->
+                <div 
+                  id="cardTemplate2D" 
+                  class="cursor-pointer border-2 border-pink-200 bg-white/90 rounded-2xl p-2 text-center transition-all hover:bg-pink-50 shadow-sm group relative overflow-hidden"
+                >
+                  <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#F9F8F5] mb-1.5 border border-[#E2DDD5] flex items-center justify-center">
+                    <img src="assets/template-2d.svg" class="w-full h-full object-contain p-0.5 group-hover:scale-105 transition-transform" alt="Template 2D">
+                  </div>
+                  <span class="text-xs font-bold text-gray-700 block">Template 2D</span>
+                  <span class="text-[10px] text-gray-500 block leading-tight">Minimalist Collage</span>
                 </div>
               </div>
             </div>
@@ -934,7 +1025,7 @@
         Bagikan Brankas Cinta ke Pasanganmu 💕
       </h3>
       <p class="text-xs sm:text-sm text-gray-600 mt-1 mb-4 leading-relaxed">
-        Link brankas ini sudah memuat data foto, surat, dan lagu pilihanmu tanpa perlu database atau server. Kirim ke WhatsApp pasanganmu!
+        Link brankas pendek dan bersih berbasis Cloud ID otomatis. Kualitas foto dijamin tetap jernih HD (anti-burik) saat dibuka di HP pasanganmu!
       </p>
 
       <!-- Readonly URL box with auto-select -->
@@ -950,7 +1041,7 @@
             class="w-full px-3.5 py-2.5 rounded-xl border-2 border-pink-200 bg-pink-50/60 text-xs font-mono text-pink-900 select-all focus:outline-none focus:border-rose-400"
           >
           <div class="flex items-center justify-between text-[10px] text-gray-400 mt-1">
-            <span class="text-emerald-600 font-semibold">✨ Kompresi LZ-String Aman Emoji</span>
+            <span class="text-emerald-600 font-bold">✨ Link Pendek Cloud &amp; Foto HD Anti-Burik</span>
             <span id="shareUrlCharCount">0 karakter</span>
           </div>
         </div>

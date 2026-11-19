@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgCoquette" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF5F8"/>
+      <stop offset="50%" stop-color="#FFE8EF"/>
+      <stop offset="100%" stop-color="#FFD6E2"/>
+    </linearGradient>
+    <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8FAB"/>
+      <stop offset="50%" stop-color="#FB6F92"/>
+      <stop offset="100%" stop-color="#C9184A"/>
+    </linearGradient>
+    <linearGradient id="pearlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#FFF0F5"/>
+      <stop offset="100%" stop-color="#E8B4C0"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#FB6F92" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="500" rx="24" fill="url(#bgCoquette)"/>
+
+  <!-- Scalloped Lace Outer Border -->
+  <rect x="14" y="14" width="372" height="472" rx="18" fill="none" stroke="#FFCCD5" stroke-width="2" stroke-dasharray="6,4"/>
+  <rect x="20" y="20" width="360" height="460" rx="14" fill="none" stroke="rgba(251,111,146,0.3)" stroke-width="1"/>
+
+  <!-- Center Photo Window -->
+  <g filter="url(#softShadow)">
+    <rect x="45" y="60" width="310" height="360" rx="16" fill="#FFFFFF"/>
+    <rect x="52" y="67" width="296" height="346" rx="12" fill="#FFF5F7" stroke="#FFCCD5" stroke-width="1.5"/>
+  </g>
+
+  <!-- Floating Mini Hearts & Stars -->
+  <text x="32" y="85" font-size="14" fill="#FB6F92" opacity="0.8">✦</text>
+  <text x="360" y="90" font-size="14" fill="#FB6F92" opacity="0.8">✦</text>
+  <text x="30" y="410" font-size="16" fill="#FF8FAB" opacity="0.7">💖</text>
+  <text x="355" y="415" font-size="16" fill="#FF8FAB" opacity="0.7">💖</text>
+  <text x="70" y="440" font-size="11" fill="#FB6F92" opacity="0.7">✧</text>
+  <text x="325" y="440" font-size="11" fill="#FB6F92" opacity="0.7">✧</text>
+
+  <!-- Pearl Beads on Corners -->
+  <circle cx="45" cy="60" r="7" fill="url(#pearlGrad)" stroke="#FFB3C6" stroke-width="1"/>
+  <circle cx="355" cy="60" r="7" fill="url(#pearlGrad)" stroke="#FFB3C6" stroke-width="1"/>
+  <circle cx="45" cy="420" r="7" fill="url(#pearlGrad)" stroke="#FFB3C6" stroke-width="1"/>
+  <circle cx="355" cy="420" r="7" fill="url(#pearlGrad)" stroke="#FFB3C6" stroke-width="1"/>
+
+  <!-- Top Center Satin Ribbon Bow -->
+  <g transform="translate(200, 56)">
+    <!-- Ribbon Tails -->
+    <path d="M-8,6 Q-28,38 -45,55 Q-35,52 -20,44 Q-12,30 -4,10 Z" fill="url(#ribbonGrad)" opacity="0.95"/>
+    <path d="M8,6 Q28,38 45,55 Q35,52 20,44 Q12,30 4,10 Z" fill="url(#ribbonGrad)" opacity="0.95"/>
+    <!-- Left Loop -->
+    <path d="M0,0 C-22,-24 -55,-12 -45,10 C-38,24 -15,12 0,4 Z" fill="url(#ribbonGrad)"/>
+    <path d="M-5,1 C-18,-14 -38,-6 -32,8 C-28,16 -12,8 -5,3 Z" fill="#FF8FAB" opacity="0.6"/>
+    <!-- Right Loop -->
+    <path d="M0,0 C22,-24 55,-12 45,10 C38,24 15,12 0,4 Z" fill="url(#ribbonGrad)"/>
+    <path d="M5,1 C18,-14 38,-6 32,8 C28,16 12,8 5,3 Z" fill="#FF8FAB" opacity="0.6"/>
+    <!-- Center Knot -->
+    <ellipse cx="0" cy="2" rx="8" ry="7" fill="#C9184A"/>
+    <ellipse cx="-1" cy="0" rx="5" ry="4" fill="#FF8FAB"/>
+  </g>
+
+  <!-- Bottom Romantic Coquette Script Banner -->
+  <rect x="75" y="445" width="250" height="28" rx="14" fill="#FFFFFF" stroke="#FFCCD5" stroke-width="1"/>
+  <text x="200" y="463" text-anchor="middle" font-family="'Caveat', cursive, sans-serif" font-size="14" font-weight="bold" fill="#C9184A" letter-spacing="1">
+    you are my favorite feeling 💕
+  </text>
+</svg>

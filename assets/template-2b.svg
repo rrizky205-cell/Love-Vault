@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="photoboxBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0F5"/>
+      <stop offset="50%" stop-color="#FCEEF2"/>
+      <stop offset="100%" stop-color="#F3E5F5"/>
+    </linearGradient>
+    <filter id="photoShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#880E4F" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Photobox Strip Outer -->
+  <rect width="400" height="500" rx="20" fill="url(#photoboxBg)"/>
+  <rect x="12" y="12" width="376" height="476" rx="16" fill="none" stroke="#FFCCD5" stroke-width="2"/>
+
+  <!-- Top Strip Header -->
+  <text x="200" y="32" text-anchor="middle" font-family="'Quicksand', sans-serif" font-size="11" font-weight="800" fill="#C9184A" letter-spacing="3">
+    ★ LOVEVAULT PHOTOBOX ★
+  </text>
+
+  <!-- Photo Slot 1 (Top) -->
+  <g filter="url(#photoShadow)">
+    <rect x="42" y="44" width="316" height="185" rx="12" fill="#FFFFFF"/>
+    <rect x="48" y="50" width="304" height="173" rx="8" fill="#FFF5F7" stroke="#FFCCD5" stroke-width="1"/>
+  </g>
+
+  <!-- Mid Separation Doodles -->
+  <g transform="translate(200, 246)">
+    <text x="-70" y="0" text-anchor="middle" font-size="13" fill="#FB6F92">✨</text>
+    <text x="0" y="3" text-anchor="middle" font-size="16" fill="#FB6F92">💖</text>
+    <text x="70" y="0" text-anchor="middle" font-size="13" fill="#FB6F92">✨</text>
+    <line x1="-120" y1="0" x2="-85" y2="0" stroke="#FFB3C6" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="85" y1="0" x2="120" y2="0" stroke="#FFB3C6" stroke-width="1.5" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- Photo Slot 2 (Bottom) -->
+  <g filter="url(#photoShadow)">
+    <rect x="42" y="260" width="316" height="185" rx="12" fill="#FFFFFF"/>
+    <rect x="48" y="266" width="304" height="173" rx="8" fill="#FFF5F7" stroke="#FFCCD5" stroke-width="1"/>
+  </g>
+
+  <!-- Bottom Photobox Branding Footer -->
+  <g transform="translate(200, 468)">
+    <text x="0" y="-3" text-anchor="middle" font-family="'Caveat', cursive" font-size="15" font-weight="bold" fill="#880E4F">
+      captured in love forever &amp; always
+    </text>
+    <!-- Mini Barcode -->
+    <g fill="#C9184A" opacity="0.65">
+      <rect x="-60" y="7" width="2" height="12"/>
+      <rect x="-55" y="7" width="4" height="12"/>
+      <rect x="-48" y="7" width="1" height="12"/>
+      <rect x="-44" y="7" width="3" height="12"/>
+      <rect x="-38" y="7" width="2" height="12"/>
+      <rect x="-32" y="7" width="5" height="12"/>
+      <rect x="-24" y="7" width="2" height="12"/>
+      <rect x="-18" y="7" width="3" height="12"/>
+      <rect x="-12" y="7" width="1" height="12"/>
+      <rect x="-8" y="7" width="4" height="12"/>
+      <rect x="0" y="7" width="2" height="12"/>
+      <rect x="5" y="7" width="3" height="12"/>
+      <rect x="11" y="7" width="1" height="12"/>
+      <rect x="15" y="7" width="4" height="12"/>
+      <rect x="22" y="7" width="2" height="12"/>
+      <rect x="28" y="7" width="5" height="12"/>
+      <rect x="36" y="7" width="2" height="12"/>
+      <rect x="42" y="7" width="3" height="12"/>
+      <rect x="48" y="7" width="1" height="12"/>
+      <rect x="52" y="7" width="4" height="12"/>
+      <rect x="58" y="7" width="2" height="12"/>
+    </g>
+  </g>
+</svg>

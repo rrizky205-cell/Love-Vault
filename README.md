@@ -6,140 +6,68 @@ Dibuat menggunakan **HTML5, Tailwind CSS, dan JavaScript Murni (Vanilla JS)** ta
 
 ---
 
-## ✨ Fitur Lengkap (Tahap 1, Tahap 2, & Tahap 3)
+## ✨ Fitur Lengkap & Pembaruan Terkini
 
-### 1. Desain Visual & Suasana Bucin Romantis
-- **Palet Warna Pastel Romantis**:
-  - Soft Blush Pink (`#FFE5EC`), Rose Pink (`#FFB3C6`), Warm Cream (`#FFF8F0`), Deep Rose Accent (`#FB6F92`), Cotton Candy (`#FF8FAB`), dan Dark Rose Crimson (`#C9184A`).
-- **Tipografi Google Fonts Manis**:
-  - `Quicksand` & `Nunito` untuk teks utama antarmuka modern yang bersih dan ramah.
-  - `Caveat` & `Pacifico` untuk tulisan tangan estetik di bawah foto Polaroid dan aksen surat cinta.
-- **Background Animasi Canvas**:
-  - Hati (love) melayang perlahan dengan efek sinusoidal sway dan denyut lembut.
-  - Kelopak bunga sakura (cherry blossom) yang berguguran pelan dengan rotasi 3D alami.
-  - Efek ledakan partikel hati (*heart sparkle burst*) setiap kali pengguna mengeklik layar.
-- **Tombol Bouncy Jelly**:
-  - Efek membal halus saat tombol ditekan (`@keyframes jellyAnimation`), bayangan lembut (*soft pink glowing shadow*).
-
----
-
-### 2. Mode Pembuat Brankas (Creator Mode)
-- **Pasangan Kasmaran**: Input Nama Kamu & Nama Pasangan dengan pill badge *live preview* di navigation bar (`Kamu ❤️ Dia`).
-- **PIN Kunci 6-Digit (DDMMYY)**:
-  - 6 kotak digit terpisah dengan navigasi otomatis dan dukungan paste.
-  - Petunjuk / Hint Lucu dengan chip saran cepat (misal: "Hari jadian 💕", "Kencan bioskop 🎬", "Momen di pantai 🏖️").
-- **Upload & Editor Foto Polaroid Klien**:
-  - Drag-and-drop atau file picker untuk gambar (JPG, PNG, WEBP).
-  - Menggunakan `FileReader` dan `HTML5 Canvas` untuk center-cropping rasio 1:1 khas film Polaroid 600.
-  - Pilihan efek filter visual: *Warm Romantic*, *Vintage Nostalgia*, atau *Asli Segar*.
-  - Bingkai polaroid klasik dengan washi tape, kemiringan tilt -2.5°, dan caption tulisan tangan live preview.
-- **Surat Rahasia Dari Hati**:
-  - Kertas surat cinta (*parchment paper*) dengan garis lembut.
-  - Tombol template siap pakai: Romantis Puitis, Lucu & Gemesin, dan Janji Setia.
-  - Toolbar emoji cepat (💕, 🥺, 🌹, 💌, ✨, 💍, 🧸).
-- **Lagu Latar Suasana Hati (Web Audio API Synthesizer)**:
-  - 3 Melodi Sintesis Prosedural (100% bekerja offline tanpa ketergantungan file eksternal):
-    1. *Music Box Romantis*: denting kotak musik melodi lullaby cinta.
-    2. *Acoustic Sweet*: arpeggio petikan dawai gitar akustik hangat.
-    3. *Lo-Fi Bucin*: alunan chord vintage hangat santai.
-  - Opsi memasukkan tautan file MP3 kustom.
-  - Tombol tes preview dengan animasi visualizer bar.
-- **Tombol "Isi Contoh" (1-Click Demo)**: Untuk langsung mencoba semua fitur dalam sekali klik.
+### 1. Sistem 9 Template Estetik (Mode 1 Foto & Mode 2 Foto) 🎨
+Sebelum upload foto, pengguna memilih mode foto dengan pilihan desain eksklusif:
+- **Mode 1 Foto (5 Pilihan Template HD)**:
+  - `Template 1A`: Bingkai Beige Abstrak & Garis Ilustrasi Bunga Organik.
+  - `Template 1B`: Kolase Vintage Teddy Bear, Kupu-Kupu & Kamera Retro.
+  - `Template 1C (Baru)`: Coquette Pink Ribbon dengan pita satin, untaian mutiara, dan renda lembut.
+  - `Template 1D (Baru)`: Classic 35mm Film Frame dengan sprocket film dan marking Kodak Portra 400.
+  - `Template 1E (Baru)`: Romantic Floral Scrapbook bergaya kertas kraft, bunga kering & cap prangko cinta 14¢.
+- **Mode 2 Foto (4 Pilihan Template HD)**:
+  - `Template 2A`: Latar Rajutan Krem Hangat dengan 2 Polaroid Miring, Boneka Teddy & Bunga Lili.
+  - `Template 2B (Baru)`: Sweet Photobooth Strip vertikal 2 foto bertumpuk ala photobox Korea.
+  - `Template 2C (Baru)`: Pinned Corkboard Duo dengan papan gabus/linen, pin merah & masking tape transparan.
+  - `Template 2D (Baru)`: Minimalist Aesthetic Collage tata letak editorial modern majalah gaya hidup.
 
 ---
 
-### 3. Mode Brankas Terkunci (Tahap 2: Lock Screen) 🔒
-- **Kotak Perhiasan Romantis & Gembok Cinta**:
-  - Kartu brankas berbentuk kotak perhiasan pastel (*pastel jewelry box*) dengan border berlian dan bayangan 3D lembut.
-  - Gembok cinta 3D (*heart padlock*) yang membal-membal lucu (*bouncing animation*), dengan shackle logam rose gold.
-- **Sapaan Personal untuk Pasangan**:
-  - Teks sapaan manis: *"Halo [Nama Pasangan], ada rahasia terkunci dari [Nama Kamu] nih! 💌"*.
-  - Tombol *"💡 Lihat Petunjuk dari [Nama Kamu]"* yang membuka popup modal petunjuk.
-- **6 Bulatan Indikator PIN**:
-  - Bulatan bertransformasi menjadi ikon hati merah muda penuh (`❤️`) yang membesar (*pop scale animation*) setiap digit ditekan.
-- **Keypad Cute (Bulat Pastel 0-9)**:
-  - Tombol angka 0-9 berbentuk lingkaran pastel estetik dengan ikon hati kecil di bawah angka.
-  - Tombol *RESET* (Hapus Semua) dan tombol *⌫* (Hapus Satu Digit).
-  - Efek suara **"Pop/Boop"** lucu berbasis Web Audio API (oscillator sintetis murni tanpa file audio luar) dengan nada pentatonik musikal.
-- **Logika Salah PIN (Teasing Roast)**:
-  - Jika 6 digit PIN salah:
-    - Kotak brankas bergetar intens (*shake animation*).
-    - Memutar suara komikal sedih *"womp-womp"*.
-    - Memunculkan banner pesan meledek/menggemaskan yang berganti secara acak.
-    - Reset otomatis bulatan indikator setelah jeda singkat agar pasangan bisa mencoba lagi.
+### 2. Kualitas Foto Polaroid HD (Anti-Burik) 📸
+- Menghentikan kompresi resolusi rendah lama.
+- Foto pengguna dipertahankan dalam resolusi HD (1080px - 1800px dengan kompresi WebP/JPEG kualitas tinggi 0.88 - 0.92).
+- Kanvas Polaroid dirender pada resolusi ultra tinggi (minimal 1200x1500 hingga 1400x1400 px) dengan `ctx.imageSmoothingQuality = 'high'`.
+- Perhitungan matematika `object-fit: cover` akurat mencegah foto gepeng, melar, atau terdistorsi pada semua orientasi (portrait, landscape, square).
 
 ---
 
-### 4. Mode Brankas Terbuka (Tahap 2 & 3: Unlocked Screen) 🔓
-- **Klimaks Pembukaan**:
-  - Shackle gembok cinta terangkat dan berputar terbuka (*unhook animation*) dengan kilau emas dan pink.
-  - Suara harpa perayaan merdu (*harp glissando fanfare*).
-  - **Semburan Grand Confetti Romantis**: Hati dan kelopak sakura berterbangan di seluruh layar via Canvas engine.
-- **Foto Polaroid Interaktif (Click-to-Wiggle)**:
-  - Foto Polaroid muncul perlahan (*fade-in & float up*).
-  - **Dapat diklik/ditap** untuk membuat foto bergoyang menggemaskan (*wiggle animation*) dan mengeluarkan letupan hati kecil di sekelilingnya!
-  - Menampilkan caption tulisan tangan font `Caveat`.
-- **Surat Rahasia dengan Amplop Terbuka & Efek Typewriter**:
-  - Tampilan amplop surat cinta pastel yang terbuka.
-  - Teks surat diketik otomatis huruf demi huruf (*typewriter effect*) dengan kursor berkedip (`|❤️`) dan suara ketikan tuts halus.
-  - Tombol kontrol surat: **"⏩ Lewati"** (menampilkan seluruh teks seketika) dan **"🔄 Ulang"** (mengetik ulang dari awal).
+### 3. Share Link Pendek & Bebas Database (Cloud JSON API) 💌
+- Tidak lagi menyematkan Base64 raksasa di URL hash yang rawan rusak dan terpotong di WhatsApp.
+- Menggunakan ID pendek bersih berformat: `${origin}/?id=${vaultId}`.
+- Didukung oleh:
+  - Vercel Serverless Function di `/api/save.js` & `/api/load.js` sebagai proxy CORS.
+  - Sinkronisasi direct ke Cloud JSON API gratis (`jsonblob.com`).
+  - Fallback offline darurat ke URL Hash LZ-String `#v=...`.
+- Layar pemuatan manis (*Cute Heart Loading Overlay*) saat data brankas diambil dari Cloud.
+- Saat dibuka di HP pasangan atau tab Incognito, aplikasi langsung membuka **Mode Brankas Terkunci** tanpa menampilkan halaman pembuatan.
+
+---
+
+### 4. Fitur Bagikan ke Instagram Story (Web Share API) 📲
+- Merender gambar vertikal 1080x1920 px (rasio 9:16) beresolusi tinggi.
+- Menggunakan **Web Share API (`navigator.share`)**: pada ponsel Android dan iPhone, tombol langsung memunculkan menu bawaan sistem untuk dibagikan langsung ke Instagram Story atau WhatsApp.
+- Fallback otomatis ke pengunduhan file PNG jika dibuka di desktop atau peramban yang tidak mendukung Web Share API.
+- Tampilan kartu memuat foto polaroid, nama pasangan, excerpt surat cinta, PIN tanggal jadian abadi, dekorasi kelopak sakura, dan watermark manis "LoveVault ❤️".
 
 ---
 
 ### 5. Pemutar Musik Vinyl Mini & YouTube IFrame Audio Engine 🎵
-- **Dukungan Link YouTube & Audio Fleksibel**:
-  - Deteksi otomatis link YouTube berbagai format (`youtube.com/watch?v=...`, `youtu.be/...`, `youtube.com/shorts/...`, atau `music.youtube.com`).
-  - Parsing 11-karakter Video ID secara cerdas via regular expression.
-  - Integrasi resmi YouTube IFrame Player API tersembunyi (*hidden audio engine*) tanpa gangguan visual.
-  - Tombol **"Tes Putar Lagu 🎵"** di halaman pembuat agar pengguna bisa menguji langsung lagu YouTube/MP3 sebelum brankas dikunci.
-  - Tetap mendukung file direct MP3 dan 3 musik sintetis Web Audio API bawaan (Music Box, Acoustic Sweet, Lo-Fi Bucin).
-- **Trigger Autoplay Sinkron Berbasis Interaksi Pengguna**:
-  - Pemutaran audio diaktifkan tepat secara sinkron di dalam event klik tombol PIN ke-6 saat dinyatakan benar, sehingga browser HP (Android/iOS) dan Desktop langsung mengizinkan suara berbunyi tanpa terblokir kebijakan autoplay browser.
-  - Indikator membal otomatis jika autoplay tertahan: *"Tap Vinyl untuk Putar Musik 🎵"*.
-- **Widget Piringan Hitam (*Vinyl*) Pastel Interaktif**:
-  - Piringan hitam berputar halus (`@keyframes spinVinylRecord`) dengan jarum *tonearm* dan teks status *"🎵 Sedang Memutar Lagu..."*.
-  - Dilengkapi tombol kendali:
-    - **Klik Piringan / Tombol Play-Pause**: Memutar atau menjeda musik (YouTube atau Web Audio).
-    - **Tombol Mute**: Membisukan atau membunyikan audio (`🔊` / `🔇`).
+- Deteksi otomatis link YouTube berbagai format (`youtube.com/watch?v=...`, `youtu.be/...`, `youtube.com/shorts/...`, atau `music.youtube.com`).
+- Parsing 11-karakter Video ID via Regex dan pemutaran melalui YouTube IFrame Player API tersembunyi.
+- Tombol **"Tes Putar Lagu 🎵"** di form pembuat untuk menguji audio sebelum brankas dikunci.
+- Autoplay sinkron saat PIN ke-6 ditekan benar untuk melewati batasan autoplay browser.
+- Piringan hitam pastel interaktif dengan tombol play, pause, dan mute.
+- Pilihan instrumen bawaan berbasis Web Audio API (Music Box, Acoustic Sweet, Lo-Fi Bucin).
 
 ---
 
-### 6. Fitur Kirim ke Pacar Tanpa Database (LZ-String & Anti-Mental) 💌
-- **Kompresi LZ-String Aman Emoji & Simbol**:
-  - Menggunakan library `lz-string` (`compressToEncodedURIComponent` dan `decompressFromEncodedURIComponent`) menggantikan `btoa`/`atob` mentah sehingga 100% aman untuk teks ber-emoji, karakter unik, dan membuat URL jauh lebih ringkas.
-- **Kompresi Foto Adaptif (Anti-Kepotong WhatsApp)**:
-  - Menggunakan HTML5 Canvas untuk mengompres foto ke format `image/webp` (dengan fallback `image/jpeg`).
-  - Loop pengecekan otomatis: jika panjang string URL melampaui batas aman (> 5500 karakter), dimensi dan kualitas foto diturunkan bertahap sehingga URL tidak akan pernah terpotong saat dikirim lewat WhatsApp.
-- **Routing Cerdas & Anti Mental ke Halaman Awal**:
-  - Membaca format `#v=...`, `#vault=...`, dan `?v=...` secara instan pada `DOMContentLoaded` maupun event `hashchange`.
-  - Semua data (nama, PIN, hint, template 1A/1B/2A, foto 1 & 2, surat rahasia, dan lagu YouTube) dibaca murni dari payload link.
-  - Jika link valid dibuka: **halaman pembuat/landing langsung disembunyikan**, dan **Mode Brankas Terkunci langsung ditampilkan** lengkap dengan template foto siap render dan YouTube player siap putar.
-  - Jika link rusak/terpotong: menampilkan modal peringatan ramah *"Link brankas tidak lengkap atau rusak, minta pasanganmu kirim ulang link-nya ya 💔"* beserta tombol *"Buat Brankas Baru"*.
-- **Kotak Berbagi & Pengujian Langsung**:
-  - **Salin Link Brankas 📋**: Menggunakan Clipboard API modern dengan fallback `execCommand`.
-  - **Tes Buka di Tab Baru 🔗**: Membuka link brankas langsung di tab baru untuk verifikasi tampilan penerima.
-  - **Kirim Langsung via WhatsApp 💬**: Tautan instan WhatsApp dengan pesan romantis siap kirim.
-  - Foto Polaroid dikompresi otomatis menggunakan HTML5 Canvas menjadi thumbnail berukuran ~250px dengan kualitas JPEG 0.5 (~8-12 KB).
-  - Seluruh data (Nama, Pasangan, PIN, Petunjuk, Foto Kompresi, Caption, Surat, Lagu) digabungkan menjadi objek JSON lalu di-encode ke Base64 pada URL Hash (`#vault=...`).
-- **Salin Link Brankas**:
-  - Tombol **"📋 Salin Link Brankas untuk Pasangan"** otomatis menyalin URL lengkap ke clipboard untuk dikirimkan melalui WhatsApp atau chat.
-- **Mode Penerima Langsung**:
-  - Saat pasangan membuka link dengan `#vault=...`, aplikasi otomatis membaca data terenkripsi dan **langsung masuk ke Mode Brankas Terkunci** milik pasangan tanpa menampilkan form pembuat! Foto dan surat tersimpan aman di dalam link.
-
----
-
-### 7. Fitur Pamer ke IG Story / Download Card (Tahap 3) 📸
-- Tombol **"📸 Simpan Kenangan (IG Story) ✨"** di halaman Brankas Terbuka.
-- Menggunakan HTML5 Canvas beresolusi tinggi ukuran vertikal **1080 x 1920 piksel (rasio 9:16)**.
-- Kartu Story berisi:
-  - Latar belakang gradasi pastel romantis dengan taburan bunga sakura, hati, dan kilau emas.
-  - Header badge: *"✨ LOVEVAULT • BUKTI CINTA ABADI ✨"*.
-  - Nama pasangan dalam font kaligrafi manis: *"[Nama Kamu] ❤️ [Nama Pasangan]"*.
-  - Badge prestasi: *"🎉 Berhasil Buka LoveVault ❤️"*.
-  - Bingkai Polaroid 3D realistis dengan foto pasangan dan caption tulisan tangan.
-  - Kotak kutipan surat cinta (*quote parchment box*).
-  - Tanda PIN tanggal jadian abadi dan watermark estetik.
-- Otomatis terunduh sebagai berkas PNG berkualitas tinggi (`LoveVault-[NamaKamu]-[NamaPasangan]-Story.png`) yang siap diunggah ke Instagram Story!
+### 6. Mode Brankas Terkunci & Buka Brankas Romantis 🔒
+- Gembok hati 3D pastel membal (*bouncing heart padlock*).
+- Keypad bulat pastel 0-9 dengan efek suara "pop/boop" Web Audio API.
+- Deteksi PIN 6 digit dengan pesan ledekan gemas acak jika salah.
+- Efek typewriter pengetikan surat rahasia otomatis dengan amplop terbuka.
+- Animasi semburan confetti hati & kelopak sakura melayang di kanvas latar belakang.
 
 ---
 
@@ -147,15 +75,29 @@ Dibuat menggunakan **HTML5, Tailwind CSS, dan JavaScript Murni (Vanilla JS)** ta
 
 ```
 lovevault/
-├── index.html              # Struktur utama SPA (Creator, Locked Jewelry Box, Unlocked Sanctuary & Vinyl Player)
+├── index.html              # Antarmuka SPA lengkap dengan 9 template picker & loading overlay
+├── vercel.json             # Konfigurasi routing serverless Vercel
+├── api/
+│   ├── save.js             # Serverless handler untuk menyimpan JSON data brankas
+│   └── load.js             # Serverless handler untuk membaca JSON data brankas berdasarkan ID
+├── assets/                 # Template visual SVG & raster HD lokal (Bebas Canvas Tainting)
+│   ├── template-1a.png     # Template 1A: Beige & Floral Line
+│   ├── template-1b.jpg     # Template 1B: Vintage Teddy & Camera
+│   ├── template-1c.svg     # Template 1C: Coquette Pink Ribbon
+│   ├── template-1d.svg     # Template 1D: Classic 35mm Film Frame
+│   ├── template-1e.svg     # Template 1E: Romantic Floral Scrapbook
+│   ├── template-2a.jpg     # Template 2A: Double Cozy Knit
+│   ├── template-2b.svg     # Template 2B: Sweet Photobooth Strip
+│   ├── template-2c.svg     # Template 2C: Pinned Corkboard Duo
+│   └── template-2d.svg     # Template 2D: Minimalist Aesthetic Collage
 ├── css/
-│   └── styles.css          # Styling pastel, vinyl player, heart padlock, cute keypad, polaroid wiggle, typewriter
+│   └── styles.css          # Styling pastel, animasi bouncy jelly, vinyl player, cute keypad
 ├── js/
-│   ├── particles.js        # Canvas engine: floating hearts, sakura, click burst & grand confetti cannon
-│   ├── audio.js            # Web Audio API: bubbly boop keypad, womp-womp error, typewriter clicks, harp & 3 BGM moods
-│   ├── polaroid.js         # FileReader + Canvas image cropping, filter & compressed thumbnail generator (~250px JPEG)
-│   ├── storyCard.js        # Generator kartu Instagram Story 9:16 (1080 x 1920 px PNG)
-│   └── app.js              # State manager, form validation, vinyl controller, URL hash sharing, IG story download
+│   ├── particles.js        # Canvas engine kelopak sakura, hati melayang & confetti
+│   ├── audio.js            # Synthesizer Web Audio API & YouTube IFrame Player controller
+│   ├── polaroid.js         # Engine render kanvas Polaroid HD (1200x1500+) untuk 9 template
+│   ├── storyCard.js        # Generator kartu IG Story 1080x1920 HD dengan Web Share API
+│   └── app.js              # State manager, Cloud JSON save/load, routing & event handlers
 └── README.md
 ```
 

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <filter id="scrapbookShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="5" stdDeviation="5" flood-color="#4A3B32" flood-opacity="0.18"/>
+    </filter>
+    <pattern id="kraftPaper" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#F8F3EA"/>
+      <circle cx="10" cy="12" r="0.8" fill="#E6DAC8" opacity="0.6"/>
+      <circle cx="28" cy="34" r="0.7" fill="#E6DAC8" opacity="0.5"/>
+      <circle cx="36" cy="18" r="0.9" fill="#E6DAC8" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Kraft Background -->
+  <rect width="400" height="500" rx="20" fill="url(#kraftPaper)"/>
+  <rect x="12" y="12" width="376" height="476" rx="16" fill="none" stroke="#E2D4C0" stroke-width="1.5" stroke-dasharray="8,5"/>
+
+  <!-- Tilted Photo Card -->
+  <g transform="rotate(-1.8 200 240)" filter="url(#scrapbookShadow)">
+    <!-- White Card Base -->
+    <rect x="42" y="55" width="316" height="385" rx="8" fill="#FFFDF8"/>
+    <!-- Photo Window -->
+    <rect x="58" y="70" width="284" height="295" rx="4" fill="#F4EFE6" stroke="#EADFCF" stroke-width="1"/>
+    <!-- Bottom Handwritten Note Line -->
+    <line x1="70" y1="395" x2="330" y2="395" stroke="#E6DAC8" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="200" y="415" text-anchor="middle" font-family="'Caveat', cursive" font-size="16" fill="#8D6E63">
+      memories that stay forever 🌿
+    </text>
+  </g>
+
+  <!-- Washi Tape at Top-Left -->
+  <g transform="translate(60, 42) rotate(-14)">
+    <rect x="-10" y="-12" width="75" height="24" rx="2" fill="#FFCCD5" opacity="0.85"/>
+    <line x1="-6" y1="-8" x2="60" y2="-8" stroke="#FB6F92" stroke-width="1" stroke-dasharray="4,4" opacity="0.6"/>
+  </g>
+
+  <!-- Vintage Love Postage Stamp at Top-Right -->
+  <g transform="translate(305, 32)">
+    <!-- Perforated Stamp Base -->
+    <rect x="0" y="0" width="56" height="68" rx="2" fill="#FFF8F0" stroke="#C9184A" stroke-width="1.5" stroke-dasharray="2,2"/>
+    <rect x="4" y="4" width="48" height="60" fill="#FFCCD5" opacity="0.5"/>
+    <!-- Stamp Graphic: Red Heart -->
+    <text x="28" y="32" text-anchor="middle" font-size="20">💌</text>
+    <text x="28" y="52" text-anchor="middle" font-family="'Courier New', monospace" font-size="7" font-weight="bold" fill="#C9184A">
+      LOVE 14¢
+    </text>
+    <!-- Wavy Postmark -->
+    <path d="M-15,20 Q-5,10 5,20 T25,20" fill="none" stroke="#7A6054" stroke-width="1" opacity="0.7"/>
+    <path d="M-15,28 Q-5,18 5,28 T25,28" fill="none" stroke="#7A6054" stroke-width="1" opacity="0.7"/>
+  </g>
+
+  <!-- Dried Botanical Flowers Illustration at Bottom-Right -->
+  <g transform="translate(295, 385)">
+    <!-- Branch & Leaves -->
+    <path d="M10,80 Q30,40 50,0" fill="none" stroke="#6D4C41" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30,42 Q45,35 48,25" fill="none" stroke="#6D4C41" stroke-width="1.5"/>
+    <path d="M22,58 Q8,48 5,38" fill="none" stroke="#6D4C41" stroke-width="1.5"/>
+    <!-- Dried Flower Blossoms -->
+    <ellipse cx="50" cy="0" rx="9" ry="6" fill="#D7CCC8" stroke="#8D6E63" stroke-width="1"/>
+    <ellipse cx="48" cy="24" rx="7" ry="5" fill="#FFE0B2" stroke="#BCAAA4" stroke-width="1"/>
+    <ellipse cx="5" cy="37" rx="8" ry="5" fill="#FFCDD2" stroke="#BCAAA4" stroke-width="1"/>
+  </g>
+</svg>

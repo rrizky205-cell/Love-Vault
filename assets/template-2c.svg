@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <filter id="corkboardShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#4E342E" flood-opacity="0.22"/>
+    </filter>
+    <radialGradient id="pinRed" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FF5252"/>
+      <stop offset="60%" stop-color="#D50000"/>
+      <stop offset="100%" stop-color="#8B0000"/>
+    </radialGradient>
+    <pattern id="linenTexture" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#F4EAE1"/>
+      <path d="M0,10 L20,10 M10,0 L10,20" stroke="#E6D7C8" stroke-width="0.5" opacity="0.6"/>
+    </pattern>
+  </defs>
+
+  <!-- Corkboard / Linen Base -->
+  <rect width="400" height="500" rx="20" fill="url(#linenTexture)"/>
+  <rect x="8" y="8" width="384" height="484" rx="16" fill="none" stroke="#D7CCC8" stroke-width="2"/>
+
+  <!-- Polaroid 1 (Top-Left, Tilted -3.5 deg) -->
+  <g transform="translate(35, 30) rotate(-3.5 100 110)" filter="url(#corkboardShadow)">
+    <!-- White Polaroid Frame -->
+    <rect x="0" y="0" width="205" height="235" rx="4" fill="#FFFFFF"/>
+    <!-- Photo Cutout -->
+    <rect x="12" y="12" width="181" height="175" rx="2" fill="#F5EFE6" stroke="#EFEBE9" stroke-width="1"/>
+    <!-- Caption Line -->
+    <text x="102" y="215" text-anchor="middle" font-family="'Caveat', cursive" font-size="14" fill="#6D4C41">
+      moment 01 ❤️
+    </text>
+  </g>
+
+  <!-- Red Push-Pin for Polaroid 1 -->
+  <g transform="translate(132, 26)">
+    <ellipse cx="2" cy="7" rx="6" ry="3" fill="#3E2723" opacity="0.35"/>
+    <circle cx="0" cy="0" r="7" fill="url(#pinRed)" stroke="#B71C1C" stroke-width="1"/>
+    <circle cx="-2" cy="-2" r="2.5" fill="#FFFFFF" opacity="0.75"/>
+  </g>
+
+  <!-- Polaroid 2 (Bottom-Right, Tilted +3.8 deg) -->
+  <g transform="translate(160, 230) rotate(3.8 100 110)" filter="url(#corkboardShadow)">
+    <!-- White Polaroid Frame -->
+    <rect x="0" y="0" width="205" height="235" rx="4" fill="#FFFFFF"/>
+    <!-- Photo Cutout -->
+    <rect x="12" y="12" width="181" height="175" rx="2" fill="#F5EFE6" stroke="#EFEBE9" stroke-width="1"/>
+    <!-- Caption Line -->
+    <text x="102" y="215" text-anchor="middle" font-family="'Caveat', cursive" font-size="14" fill="#6D4C41">
+      moment 02 💕
+    </text>
+  </g>
+
+  <!-- Washi Tape on Polaroid 2 Top-Right Corner -->
+  <g transform="translate(325, 230) rotate(24)">
+    <rect x="-10" y="-8" width="55" height="18" rx="2" fill="#FFCCD5" opacity="0.88"/>
+    <line x1="-8" y1="-4" x2="42" y2="-4" stroke="#FB6F92" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+  </g>
+
+  <!-- Decorative Little Note Pin at Bottom Left -->
+  <g transform="translate(42, 380)">
+    <rect x="0" y="0" width="95" height="70" rx="4" fill="#FFF9C4" filter="url(#corkboardShadow)"/>
+    <text x="47" y="32" text-anchor="middle" font-family="'Caveat', cursive" font-size="14" fill="#5D4037">
+      always &amp;
+    </text>
+    <text x="47" y="52" text-anchor="middle" font-family="'Caveat', cursive" font-size="15" font-weight="bold" fill="#C62828">
+      forever ✨
+    </text>
+  </g>
+</svg>
