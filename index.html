@@ -1088,18 +1088,31 @@
       <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">
         💔
       </div>
-      <h3 class="text-lg font-bold text-[#4A1525] mb-2">Link Brankas Tidak Lengkap</h3>
-      <p class="text-sm font-medium text-gray-700 bg-rose-50/80 p-4 rounded-xl border border-rose-100 mb-5 leading-relaxed">
+      <h3 class="text-lg font-bold text-[#4A1525] mb-2 font-quicksand">Link Brankas Tidak Dapat Dimuat</h3>
+      <p id="brokenLinkErrorMsg" class="text-xs sm:text-sm font-medium text-gray-700 bg-rose-50/80 p-3.5 rounded-xl border border-rose-100 mb-2 leading-relaxed">
         Link brankas tidak lengkap atau rusak, minta pasanganmu kirim ulang link-nya ya 💔
       </p>
-      <button 
-        type="button" 
-        id="btnCreateNewFromBroken" 
-        class="btn-jelly w-full bg-[#FB6F92] hover:bg-[#C9184A] text-white font-bold py-3 rounded-xl text-sm shadow-md flex items-center justify-center gap-2"
-      >
-        <span>✨</span>
-        <span>Buat Brankas Baru</span>
-      </button>
+      <p id="brokenLinkDiagnostics" class="text-[10px] sm:text-[11px] font-mono text-rose-600 mb-4 break-all bg-white/70 p-2 rounded-lg border border-rose-200 hidden text-left"></p>
+      
+      <div class="space-y-2">
+        <button 
+          type="button" 
+          id="btnRetryLoadVault" 
+          class="btn-jelly w-full bg-gradient-to-r from-[#FB6F92] to-[#C9184A] text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2"
+        >
+          <span>🔄</span>
+          <span>Coba Muat Ulang</span>
+        </button>
+
+        <button 
+          type="button" 
+          id="btnCreateNewFromBroken" 
+          class="btn-soft w-full bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2"
+        >
+          <span>✨</span>
+          <span>Buat Brankas Baru</span>
+        </button>
+      </div>
     </div>
   </div>
 

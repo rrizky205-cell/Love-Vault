@@ -706,7 +706,7 @@ class PolaroidProcessor {
   }
 
   /**
-   * Export HD photos for Cloud JSON Storage
+   * Export HD photos for Cloud JSON Storage (Max 1280px, quality 0.85, ~150-350KB per photo)
    */
   getShareablePhotosHD() {
     const res = { i1: '', i2: '' };
@@ -714,7 +714,7 @@ class PolaroidProcessor {
       if (!img) return '';
       try {
         const c = document.createElement('canvas');
-        const maxD = 1200;
+        const maxD = 1280;
         const w = img.naturalWidth || img.width || 800;
         const h = img.naturalHeight || img.height || 800;
         const scale = Math.min(1, maxD / Math.max(w, h));
@@ -724,7 +724,17 @@ class PolaroidProcessor {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, c.width, c.height);
-        return c.toDataURL('image/webp', 0.88);
+
+        let dataUrl = '';
+        try {
+          dataUrl = c.toDataURL('image/webp', 0.85);
+          if (!dataUrl || !dataUrl.startsWith('data:image/webp')) {
+            dataUrl = c.toDataURL('image/jpeg', 0.85);
+          }
+        } catch (e) {
+          dataUrl = c.toDataURL('image/jpeg', 0.85);
+        }
+        return dataUrl;
       } catch (e) {
         return '';
       }

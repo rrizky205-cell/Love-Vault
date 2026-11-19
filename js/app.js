@@ -1149,13 +1149,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============================================================
-     9. Short Share Link Engine (Cloud JSON API with HD Photos & Short IDs)
+     9. Short Share Link Engine (Cloud Multi-Provider Storage)
      ============================================================ */
   async function generateShareLinkData() {
-    // Obtain HD quality photos for crisp rendering on partner's device
+    // 1. Obtain optimized HD photos (max 1280px, quality 0.85, ~150-350KB per photo)
     const photosHD = polaroid.getShareablePhotosHD 
       ? polaroid.getShareablePhotosHD() 
-      : polaroid.getShareablePhotos(1080, 0.90, 1080, 0.90);
+      : polaroid.getShareablePhotos(1280, 0.85, 1280, 0.85);
 
     const isYt = Boolean(extractYouTubeID(state.customMusicUrl));
     const payload = {
@@ -1175,82 +1175,34 @@ document.addEventListener('DOMContentLoaded', () => {
       createdAt: new Date().toISOString()
     };
 
-    let vaultId = null;
+    // 2. Call Vercel Serverless Function POST /api/save
+    const res = await fetch('/api/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
 
-    // Strategy 1: Vercel Serverless Function Proxy (/api/save)
-    try {
-      const res = await fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.id) {
-          vaultId = data.id;
-        }
-      }
-    } catch (err) {
-      console.warn('API /api/save unavailable, trying direct storage...', err);
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error(`Server Vercel merespon format tidak terduga (${res.status}). Pastikan /api/save aktif.`);
     }
 
-    // Strategy 2: Direct jsonblob.com API (Free JSON store with CORS support)
-    if (!vaultId) {
-      try {
-        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-        if (res.status === 201 || res.ok) {
-          const loc = res.headers.get('Location') || res.headers.get('x-jsonblob-id');
-          if (loc) {
-            const parts = loc.split('/');
-            vaultId = parts[parts.length - 1];
-          } else {
-            const data = await res.json().catch(() => null);
-            if (data && data.id) vaultId = data.id;
-          }
-        }
-      } catch (err) {
-        console.warn('Direct jsonblob API error, falling back to local hash...', err);
-      }
+    const result = await res.json();
+    if (!res.ok || !result || !result.ok || typeof result.id !== 'string' || !result.id.trim()) {
+      const errDetail = result && result.error ? result.error : `HTTP ${res.status}`;
+      throw new Error(errDetail);
     }
 
-    // Strategy 3: Success with short clean URL
-    if (vaultId) {
-      const shareUrl = `${window.location.origin}${window.location.pathname}?id=${vaultId}`;
-      return {
-        shareUrl,
-        charCount: shareUrl.length,
-        isShortLink: true,
-        id: vaultId
-      };
-    }
+    const cleanId = result.id.trim();
+    const shareUrl = `${window.location.origin}/?id=${encodeURIComponent(cleanId)}`;
 
-    // Strategy 4 (Offline Fallback): Compressed URL Hash via LZ-String
-    let finalEncoded = '';
-    const photosCompact = polaroid.getShareablePhotos(240, 0.55, 180, 0.45);
-    const compactPayload = {
-      ...payload,
-      i1: photosCompact.i1 || '',
-      i2: photosCompact.i2 || ''
-    };
-    const jsonStr = JSON.stringify(compactPayload);
-    if (typeof LZString !== 'undefined' && LZString.compressToEncodedURIComponent) {
-      finalEncoded = LZString.compressToEncodedURIComponent(jsonStr);
-    } else {
-      finalEncoded = btoa(encodeURIComponent(jsonStr));
-    }
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}#v=${finalEncoded}`;
     return {
       shareUrl,
       charCount: shareUrl.length,
-      isShortLink: false
+      id: cleanId,
+      provider: result.provider || 'cloud'
     };
   }
 
@@ -1258,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.playPop();
 
     if (shareModalUrlInput) {
-      shareModalUrlInput.value = '⏳ Menyimpan ke Cloud & membuat link pendek HD...';
+      shareModalUrlInput.value = '⏳ Menyimpan brankas ke cloud...';
     }
     if (shareUrlCharCount) {
       shareUrlCharCount.textContent = 'Menghubungkan ke Cloud Storage...';
@@ -1275,19 +1227,20 @@ document.addEventListener('DOMContentLoaded', () => {
         shareModalUrlInput.value = data.shareUrl;
       }
       if (shareUrlCharCount) {
-        if (data.isShortLink) {
-          shareUrlCharCount.textContent = `✨ ${data.charCount} karakter (Link Pendek Resmi, Foto Kualitas HD Anti-Burik!)`;
-          shareUrlCharCount.className = "text-[11px] text-green-700 font-bold bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200";
-        } else {
-          shareUrlCharCount.textContent = `${data.charCount} karakter (Mode Kompresi Darurat)`;
-          shareUrlCharCount.className = "text-[11px] text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200";
-        }
+        shareUrlCharCount.textContent = `✨ ${data.charCount} karakter (ID: ${data.id} via ${data.provider})`;
+        shareUrlCharCount.className = "text-[11px] text-green-700 font-bold bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200";
       }
       showToast('🔗 Link Brankas HD siap dibagikan ke pasangan!');
     } catch (err) {
       console.error('Error generating link:', err);
-      if (shareModalUrlInput) shareModalUrlInput.value = window.location.href;
-      showToast('⚠️ Gagal membuat link pendek, silakan coba lagi!');
+      if (shareModalUrlInput) {
+        shareModalUrlInput.value = `⚠️ Gagal: ${err.message}`;
+      }
+      if (shareUrlCharCount) {
+        shareUrlCharCount.textContent = 'Gagal menyimpan, periksa koneksi dan coba lagi.';
+        shareUrlCharCount.className = "text-[11px] text-rose-700 font-bold bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200";
+      }
+      showToast(`⚠️ Gagal membuat link: ${err.message}`);
     }
   }
 
@@ -1391,81 +1344,72 @@ document.addEventListener('DOMContentLoaded', () => {
   // Applies payload to application state & views
   function applyVaultPayload(payload) {
     const hasPin = payload && (payload.p || payload.pin);
-    const hasName = payload && (payload.n1 || payload.u);
+    const hasName = payload && (payload.n1 || payload.userName || payload.u);
 
     if (!payload || !hasPin || !hasName) {
-      showBrokenLinkModal();
-      return false;
+      throw new Error('Data brankas tidak memiliki PIN atau Nama yang valid.');
     }
 
-    try {
-      state.userName = payload.n1 || payload.u || 'Kamu';
-      state.partnerName = payload.n2 || payload.p || 'Dia';
-      state.pin = String(payload.p || payload.pin || '');
-      state.hint = payload.h || '';
-      state.secretLetter = payload.s || payload.l || '';
-      state.mode = payload.m || payload.mode || '1';
-      state.template = payload.t || payload.tmpl || '1a';
-      state.customMusicUrl = payload.a || payload.cm || '';
-      
-      const hasYt = Boolean(extractYouTubeID(state.customMusicUrl));
-      if (hasYt) {
-        state.musicMood = 'custom';
-      } else if (payload.at === 'mp3' || (state.customMusicUrl && state.customMusicUrl.endsWith('.mp3'))) {
-        state.musicMood = 'custom';
-      } else {
-        state.musicMood = payload.at || payload.m || 'music_box';
-      }
-
-      if (payload.c) {
-        polaroid.captionText = payload.c;
-        polaroid.updatePolaroidDOMCaption();
-      }
-
-      // Populate Input fields so everything stays synchronized
-      if (inputUserName) inputUserName.value = state.userName;
-      if (inputPartnerName) inputPartnerName.value = state.partnerName;
-      updateCoupleDisplay();
-
-      state.pin.split('').forEach((d, i) => {
-        if (pinDigits[i]) pinDigits[i].value = d;
-      });
-
-      if (inputHint) inputHint.value = state.hint;
-      if (inputSecretLetter) inputSecretLetter.value = state.secretLetter;
-      if (inputCustomMusic) inputCustomMusic.value = state.customMusicUrl;
-      if (selectMusicMood) selectMusicMood.value = state.musicMood === 'custom' ? 'custom' : state.musicMood;
-      if (state.musicMood === 'custom' && customMusicContainer) {
-        customMusicContainer.classList.remove('hidden');
-      }
-
-      // Restore Mode & Template
-      updateModeUI(state.mode);
-      updateTemplateUI(state.template);
-
-      // Load Photos HD
-      if (payload.i1 || payload.i2) {
-        polaroid.loadPhotosFromShare(payload.i1, payload.i2, state.mode, state.template);
-      } else if (payload.img) {
-        polaroid.loadComposite(payload.img);
-      }
-
-      // Pre-buffer YouTube in background
-      if (state.customMusicUrl) {
-        audio.prepareYouTube(state.customMusicUrl);
-      }
-
-      // DIRECTLY ENTER LOCKED VAULT MODE FOR PARTNER!
-      // Never kick back to login/creator form!
-      switchToLockedVaultMode();
-      showToast(`💌 Rahasia cinta dari ${state.userName} untuk ${state.partnerName}! Masukkan PIN untuk membuka.`);
-      return true;
-
-    } catch (err) {
-      console.warn('Error applying shared vault state:', err);
-      showBrokenLinkModal();
-      return false;
+    state.userName = payload.n1 || payload.userName || payload.u || 'Kamu';
+    state.partnerName = payload.n2 || payload.partnerName || payload.p || 'Dia';
+    state.pin = String(payload.p || payload.pin || '');
+    state.hint = payload.h || payload.hint || '';
+    state.secretLetter = payload.s || payload.secretLetter || payload.l || '';
+    state.mode = payload.m || payload.mode || '1';
+    state.template = payload.t || payload.template || payload.tmpl || '1a';
+    state.customMusicUrl = payload.a || payload.customMusicUrl || payload.cm || '';
+    
+    const hasYt = Boolean(extractYouTubeID(state.customMusicUrl));
+    if (hasYt) {
+      state.musicMood = 'custom';
+    } else if (payload.at === 'mp3' || (state.customMusicUrl && state.customMusicUrl.endsWith('.mp3'))) {
+      state.musicMood = 'custom';
+    } else {
+      state.musicMood = payload.at || payload.m || 'music_box';
     }
+
+    if (payload.c || payload.caption) {
+      polaroid.captionText = payload.c || payload.caption;
+      polaroid.updatePolaroidDOMCaption();
+    }
+
+    // Populate Input fields so everything stays synchronized
+    if (inputUserName) inputUserName.value = state.userName;
+    if (inputPartnerName) inputPartnerName.value = state.partnerName;
+    updateCoupleDisplay();
+
+    state.pin.split('').forEach((d, i) => {
+      if (pinDigits[i]) pinDigits[i].value = d;
+    });
+
+    if (inputHint) inputHint.value = state.hint;
+    if (inputSecretLetter) inputSecretLetter.value = state.secretLetter;
+    if (inputCustomMusic) inputCustomMusic.value = state.customMusicUrl;
+    if (selectMusicMood) selectMusicMood.value = state.musicMood === 'custom' ? 'custom' : state.musicMood;
+    if (state.musicMood === 'custom' && customMusicContainer) {
+      customMusicContainer.classList.remove('hidden');
+    }
+
+    // Restore Mode & Template
+    updateModeUI(state.mode);
+    updateTemplateUI(state.template);
+
+    // Load Photos HD
+    if (payload.i1 || payload.i2) {
+      polaroid.loadPhotosFromShare(payload.i1, payload.i2, state.mode, state.template);
+    } else if (payload.img) {
+      polaroid.loadComposite(payload.img);
+    }
+
+    // Pre-buffer YouTube in background
+    if (state.customMusicUrl) {
+      audio.prepareYouTube(state.customMusicUrl);
+    }
+
+    // DIRECTLY ENTER LOCKED VAULT MODE FOR PARTNER!
+    switchToLockedVaultMode();
+    showToast(`💌 Rahasia cinta dari ${state.userName} untuk ${state.partnerName}! Masukkan PIN untuk membuka.`);
+    return true;
   }
 
   // Load Vault using Short ID from Cloud Storage
@@ -1473,45 +1417,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay = document.getElementById('vaultLoadingOverlay');
     if (loadingOverlay) loadingOverlay.classList.remove('hidden');
 
-    let payload = null;
+    // Immediately hide creator section so recipient never sees creator mode
+    if (creatorSection) creatorSection.classList.add('hidden');
 
-    // 1. Try Vercel Serverless Function Proxy
     try {
-      const res = await fetch(`/api/load?id=${encodeURIComponent(vaultId)}`);
-      if (res.ok) {
-        payload = await res.json();
+      const cleanId = vaultId.trim();
+      const res = await fetch(`/api/load?id=${encodeURIComponent(cleanId)}`);
+
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(`Non-JSON Response (HTTP ${res.status}) - Terjadi rewrite SPA`);
       }
+
+      const payload = await res.json();
+      if (!res.ok || (payload && payload.ok === false)) {
+        const errorMsg = (payload && payload.error) ? payload.error : `HTTP ${res.status}`;
+        throw new Error(errorMsg);
+      }
+
+      applyVaultPayload(payload);
+
+      if (loadingOverlay) {
+        setTimeout(() => {
+          loadingOverlay.classList.add('hidden');
+        }, 350);
+      }
+      return true;
+
     } catch (err) {
-      console.warn('Failed loading from /api/load:', err);
-    }
-
-    // 2. Direct jsonblob.com fallback
-    if (!payload) {
-      try {
-        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${encodeURIComponent(vaultId)}`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (res.ok) {
-          payload = await res.json();
-        }
-      } catch (err) {
-        console.warn('Failed loading from jsonblob direct:', err);
-      }
-    }
-
-    if (!payload) {
+      console.error('Failed to load vault by ID:', err);
       if (loadingOverlay) loadingOverlay.classList.add('hidden');
-      showBrokenLinkModal();
+      showBrokenLinkModal(`Kode: ${err.message}`);
       return false;
     }
-
-    const ok = applyVaultPayload(payload);
-    if (loadingOverlay) {
-      setTimeout(() => {
-        loadingOverlay.classList.add('hidden');
-      }, 350);
-    }
-    return ok;
   }
 
   // Fallback: Load Vault using URL Hash (LZ-String or Base64)
@@ -1552,7 +1490,17 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (e) {}
     }
 
-    return applyVaultPayload(payload);
+    if (!payload) {
+      showBrokenLinkModal('Kode: Format URL Hash tidak valid');
+      return false;
+    }
+
+    try {
+      return applyVaultPayload(payload);
+    } catch (e) {
+      showBrokenLinkModal(`Kode: ${e.message}`);
+      return false;
+    }
   }
 
   // Master Initial Route Checker
@@ -1560,21 +1508,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchParams = new URLSearchParams(window.location.search);
     const idParam = searchParams.get('id');
 
-    if (idParam) {
-      const loaded = await loadVaultFromId(idParam);
-      if (loaded) return;
+    // PRIORITY 1: When ?id= is found, DISABLE and SKIP all old hash parsing completely!
+    if (idParam && idParam.trim()) {
+      await loadVaultFromId(idParam.trim());
+      return;
     }
 
+    // Legacy fallback: only check hash if no ?id= parameter exists
     if (window.location.hash) {
       loadFromUrlHash();
     }
   }
 
-  function showBrokenLinkModal() {
+  function showBrokenLinkModal(diagnosticCode) {
     if (brokenLinkModal) {
+      const diagEl = document.getElementById('brokenLinkDiagnostics');
+      if (diagEl) {
+        if (diagnosticCode) {
+          diagEl.textContent = diagnosticCode;
+          diagEl.classList.remove('hidden');
+        } else {
+          diagEl.classList.add('hidden');
+        }
+      }
       brokenLinkModal.classList.remove('hidden');
       brokenLinkModal.classList.add('flex');
     }
+  }
+
+  const btnRetryLoadVault = document.getElementById('btnRetryLoadVault');
+  if (btnRetryLoadVault) {
+    btnRetryLoadVault.addEventListener('click', () => {
+      audio.playPop();
+      if (brokenLinkModal) {
+        brokenLinkModal.classList.add('hidden');
+        brokenLinkModal.classList.remove('flex');
+      }
+      checkInitialRoute();
+    });
   }
 
   if (btnCreateNewFromBroken) {
